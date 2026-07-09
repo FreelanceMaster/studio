@@ -115,6 +115,7 @@
   .card{
     /* variables de thème */
     --acc:var(--jaune);
+    --acc-rgb:255,210,0;
     --ink:#fff;
     --panel:rgba(0,0,0,.55);
     --muted:#9a9aa6;
@@ -144,7 +145,7 @@
 
   /* ---- THEME MINIMALISTE ---- */
   .card.theme-minimal{
-    --acc:#b8860b; --ink:#141414; --panel:rgba(255,255,255,.75); --muted:#666; --bd:#ddd;
+    --acc:#b8860b; --acc-rgb:184,134,11; --ink:#141414; --panel:rgba(255,255,255,.75); --muted:#666; --bd:#ddd;
     background:linear-gradient(180deg,#f7f5ef 0%, #efece3 100%);
   }
   .card.theme-minimal::before{display:none;}
@@ -154,7 +155,7 @@
 
   /* ---- THEME FUTURISTE ---- */
   .card.theme-futur{
-    --acc:#19d3ff; --panel:rgba(4,10,26,.65); --bd:#123;
+    --acc:#19d3ff; --acc-rgb:25,211,255; --panel:rgba(4,10,26,.65); --bd:#123;
     background:
       radial-gradient(ellipse 70% 40% at 50% -5%, rgba(25,211,255,.35) 0%, transparent 60%),
       radial-gradient(ellipse 60% 40% at 50% 110%, rgba(123,47,247,.55) 0%, transparent 65%),
@@ -164,7 +165,7 @@
 
   /* ---- THEME SPORT ---- */
   .card.theme-sport{
-    --acc:#2ee06a; --panel:rgba(1,20,8,.6); --bd:#12351f;
+    --acc:#2ee06a; --acc-rgb:46,224,106; --panel:rgba(1,20,8,.6); --bd:#12351f;
     background:
       repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 40px, transparent 40px 80px),
       radial-gradient(ellipse 80% 50% at 50% 115%, rgba(46,224,106,.35) 0%, transparent 65%),
@@ -182,7 +183,7 @@
     width:74px;height:74px;border-radius:50%;
     background:var(--panel);
     border:2.5px solid var(--acc);
-    box-shadow:0 0 18px color-mix(in srgb, var(--acc) 55%, transparent);
+    box-shadow:0 0 18px rgba(var(--acc-rgb),0.55);
     display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
   }
   .badge .t{font-size:7px;letter-spacing:.5px;color:var(--ink);font-weight:bold;text-transform:uppercase;line-height:1.2;}
@@ -210,7 +211,7 @@
   .team{width:120px;text-align:center;}
   .flag{font-size:44px;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4));}
   .tname{font-size:14px;font-weight:900;text-transform:uppercase;font-style:italic;margin-top:6px;letter-spacing:.5px;color:var(--ink);}
-  .vs{font-size:16px;font-weight:900;font-style:italic;color:var(--acc);text-shadow:0 0 12px color-mix(in srgb, var(--acc) 70%, transparent);}
+  .vs{font-size:16px;font-weight:900;font-style:italic;color:var(--acc);text-shadow:0 0 12px rgba(var(--acc-rgb),0.7);}
 
   .proba{position:relative;z-index:2;display:flex;gap:6px;margin-bottom:12px;}
   .pcell{flex:1;border-radius:10px;padding:8px 4px;text-align:center;background:var(--panel);border:1.5px solid transparent;}
@@ -224,9 +225,9 @@
 
   .verdict{
     position:relative;z-index:2;
-    background:color-mix(in srgb, var(--acc) 14%, transparent);
+    background:rgba(var(--acc-rgb),0.14);
     border:1.5px solid var(--acc);
-    box-shadow:0 0 20px color-mix(in srgb, var(--acc) 30%, transparent);
+    box-shadow:0 0 20px rgba(var(--acc-rgb),0.3);
     border-radius:12px;padding:10px;text-align:center;margin-bottom:12px;
   }
   .verdict .l{font-size:8px;letter-spacing:2px;color:var(--acc);text-transform:uppercase;font-weight:bold;}
@@ -262,7 +263,7 @@
   .sc{
     flex:1;text-align:center;border-radius:10px;padding:8px 4px;
     background:var(--panel);border:1.5px solid var(--acc);
-    box-shadow:0 0 12px color-mix(in srgb, var(--acc) 25%, transparent);
+    box-shadow:0 0 12px rgba(var(--acc-rgb),0.25);
   }
   .sc .n{font-size:20px;font-weight:900;font-style:italic;color:var(--acc);}
   .sc .l{font-size:8px;color:var(--muted);text-transform:uppercase;margin-top:2px;}
@@ -273,7 +274,7 @@
   .qr-frame{
     background:#fff;padding:4px;border-radius:10px;
     border:2px solid var(--acc);
-    box-shadow:0 0 14px color-mix(in srgb, var(--acc) 50%, transparent);
+    box-shadow:0 0 14px rgba(var(--acc-rgb),0.5);
     line-height:0;flex-shrink:0;
   }
   .qr-frame img,.qr-frame canvas{width:52px!important;height:52px!important;display:block;}
@@ -328,7 +329,7 @@
   .hero{position:relative;z-index:2;text-align:center;margin:8px 0;}
   .hero .big{
     font-size:42px;font-weight:900;font-style:italic;text-transform:uppercase;line-height:1;
-    color:var(--acc);text-shadow:0 0 24px color-mix(in srgb, var(--acc) 60%, transparent);
+    color:var(--acc);text-shadow:0 0 24px rgba(var(--acc-rgb),0.6);
   }
   .hero .prix{
     display:inline-block;margin-top:8px;padding:6px 20px;border-radius:30px;
@@ -338,14 +339,14 @@
     position:relative;z-index:2;text-align:center;margin:6px auto 8px;
     border:2px dashed var(--acc);border-radius:10px;padding:7px 14px;width:fit-content;
     font-size:15px;font-weight:900;letter-spacing:3px;color:var(--ink);
-    background:color-mix(in srgb, var(--acc) 10%, transparent);
+    background:rgba(var(--acc-rgb),0.1);
   }
   .cta{position:relative;z-index:2;text-align:center;margin:4px 0 10px;}
   .cta span{
     display:inline-block;background:var(--acc);color:#000;
     font-weight:900;text-transform:uppercase;letter-spacing:1px;
     padding:11px 26px;border-radius:30px;font-size:14px;
-    box-shadow:0 0 22px color-mix(in srgb, var(--acc) 55%, transparent);
+    box-shadow:0 0 22px rgba(var(--acc-rgb),0.55);
   }
   #pub-bg{
     position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;
@@ -451,6 +452,27 @@
   @keyframes rIn{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}
   @keyframes rPop{0%{opacity:0;transform:scale(.7);}60%{transform:scale(1.08);}100%{opacity:1;transform:scale(1);}}
   @keyframes rPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+  h1{
+    font-size:16px;letter-spacing:5px;text-transform:uppercase;margin-bottom:16px;
+    background:linear-gradient(90deg,#f6d565,#e8b83a 40%,#fff8dc 50%,#e8b83a 60%,#f6d565);
+    background-size:200% auto;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:goldShine 6s linear infinite;
+    text-shadow:none;
+  }
+  @keyframes goldShine{to{background-position:200% center;}}
+
+  .panel{
+    backdrop-filter:blur(6px);
+  }
+  .dl{
+    box-shadow:0 4px 18px rgba(232,184,58,.28), inset 0 1px 0 rgba(255,255,255,.35);
+    transition:transform .12s, box-shadow .2s;
+  }
+  .dl:hover{box-shadow:0 6px 24px rgba(232,184,58,.45), inset 0 1px 0 rgba(255,255,255,.35);}
+  .dl.sec{box-shadow:0 2px 10px rgba(0,0,0,.4);}
+  .tabs button, .themes button{transition:all .15s;}
+  .tabs button:hover, .themes button:hover{transform:translateY(-1px);}
 </style>
 </head>
 <body>
@@ -653,6 +675,7 @@
 
     <label style="margin-top:16px;">Prompt IA pour générer un visuel de fond</label>
     <select id="sel-prompt">
+      <option value="programme">Affiche programme (joueurs + blasons, style viral)</option>
       <option value="affiche">Affiche premium BLACK PARIS</option>
       <option value="insta">Publicité Instagram VIP</option>
       <option value="banniere">Bannière Facebook</option>
@@ -821,6 +844,8 @@
   <div id="btn-dl-wrap" style="display:flex;gap:8px;max-width:360px;width:100%;flex-wrap:wrap;">
     <button class="dl" style="margin-top:14px;flex:2;" id="btn-dl" onclick="doCapture('png')">📸 PNG</button>
     <button class="dl sec" style="margin-top:14px;flex:1;" onclick="doCapture('jpg')">JPG</button>
+    <button class="dl" id="btn-share" style="margin-top:8px;flex:1 0 48%;" onclick="doShare(this)">📤 Partager</button>
+    <button class="dl sec" id="btn-video" style="margin-top:8px;flex:1 0 48%;" onclick="exportVideo(this)">🎥 Vidéo auto 6s</button>
     <button class="dl sec" style="margin-top:8px;flex:1 0 100%;" onclick="openReel()">🎬 Mode Reel (vidéo TikTok)</button>
   </div>
 </div>
@@ -901,6 +926,37 @@ function renderPred(){
   saveState();
 }
 
+/* ---------- DRAPEAUX INTELLIGENTS ---------- */
+// Tape le nom du pays (français) → le drapeau se met tout seul
+const FLAGS = {
+  'france':'🇫🇷','bresil':'🇧🇷','argentine':'🇦🇷','espagne':'🇪🇸','belgique':'🇧🇪',
+  'angleterre':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','norvege':'🇳🇴','suisse':'🇨🇭','maroc':'🇲🇦','canada':'🇨🇦',
+  'mexique':'🇲🇽','allemagne':'🇩🇪','portugal':'🇵🇹','pays-bas':'🇳🇱','pays bas':'🇳🇱',
+  'italie':'🇮🇹','croatie':'🇭🇷','japon':'🇯🇵','coree du sud':'🇰🇷','coree':'🇰🇷',
+  'etats-unis':'🇺🇸','etats unis':'🇺🇸','usa':'🇺🇸','uruguay':'🇺🇾','colombie':'🇨🇴',
+  'chili':'🇨🇱','perou':'🇵🇪','equateur':'🇪🇨','paraguay':'🇵🇾','venezuela':'🇻🇪',
+  'senegal':'🇸🇳','cameroun':'🇨🇲','nigeria':'🇳🇬','ghana':'🇬🇭','algerie':'🇩🇿',
+  'tunisie':'🇹🇳','egypte':'🇪🇬',"cote d'ivoire":'🇨🇮','cote divoire':'🇨🇮','mali':'🇲🇱',
+  'australie':'🇦🇺','qatar':'🇶🇦','arabie saoudite':'🇸🇦','iran':'🇮🇷','turquie':'🇹🇷',
+  'pologne':'🇵🇱','danemark':'🇩🇰','suede':'🇸🇪','ecosse':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','pays de galles':'🏴󠁧󠁢󠁷󠁬󠁳󠁿',
+  'irlande':'🇮🇪','autriche':'🇦🇹','serbie':'🇷🇸','ukraine':'🇺🇦','grece':'🇬🇷',
+  'republique tcheque':'🇨🇿','tchequie':'🇨🇿','panama':'🇵🇦','costa rica':'🇨🇷',
+  'jamaique':'🇯🇲','honduras':'🇭🇳','haiti':'🇭🇹','nouvelle-zelande':'🇳🇿','nouvelle zelande':'🇳🇿'
+};
+function flagFor(name){
+  if(!name) return null;
+  const k = name.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  return FLAGS[k] || null;
+}
+// Auto-application sur les champs équipe de la prédiction
+['1','2'].forEach(n=>{
+  const inp = document.getElementById('p-n'+n);
+  if(inp) inp.addEventListener('input', ()=>{
+    const f = flagFor(inp.value);
+    if(f){ document.getElementById('p-d'+n).value = f; renderPred(); }
+  });
+});
+
 /* ---------- BILAN ---------- */
 let rows = [
   {f1:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', f2:'🇲🇽', t:'Angleterre – Mexique', s:'3 - 2', p:'Prono : Angleterre', ok:true},
@@ -932,9 +988,18 @@ function buildRowInputs(){
     </div>`;
   });
 }
-function upRow(i,k,v){
-  if(k==='flags'){ const parts=v.trim().split(/\s+/); rows[i].f1=parts[0]||''; rows[i].f2=parts[1]||''; }
-  else rows[i][k]=v;
+function upRow(i,k,val){
+  if(k==='flags'){ const parts=val.trim().split(/\s+/); rows[i].f1=parts[0]||''; rows[i].f2=parts[1]||''; }
+  else rows[i][k]=val;
+  // Drapeaux auto quand on tape "France – Maroc"
+  if(k==='t'){
+    const m = val.split(/\s*[–—-]\s*/);
+    if(m.length===2){
+      const f1=flagFor(m[0]), f2=flagFor(m[1]);
+      if(f1) rows[i].f1=f1;
+      if(f2) rows[i].f2=f2;
+    }
+  }
   renderBilan(false);
 }
 function addRow(){
@@ -1291,6 +1356,7 @@ function copyTxt(id){
 /* Prompts IA pour visuels de fond (charte BLACK PARIS intégrée) */
 const CHARTE = "Luxury premium sports brand aesthetic: matte black background, pure gold (#E8B83A) accents, deep red details, titanium grey, subtle golden particles, cinematic dramatic lighting, high-end Dior/Porsche advertising style, ultra detailed, 8k, professional advertising photography. Leave the center-bottom area darker and less busy so text overlays remain readable. No text, no letters, no words, no logos in the image.";
 const PROMPTS = {
+  programme: {dim:'vertical poster 9:16', scene:'Epic World Cup knockout-stage lineup poster: four matchups stacked vertically, each row showing two national team shield crests styled as glossy flag badges facing each other with a large golden VS emblem between them and a small gold-framed date/time plaque below, star football players in national team kits standing on the left and right edges pointing at the matchups, packed night stadium with golden floodlights and confetti in the background, golden World Cup trophy glowing in a top corner'},
   affiche:  {dim:'vertical poster 2:3', scene:'Epic football stadium at night under golden floodlights, dramatic haze, a golden World Cup style trophy glowing in the distance'},
   insta:    {dim:'square 1:1', scene:'Close-up of a premium black VIP membership card with gold edges floating over a dark football pitch, golden bokeh particles'},
   banniere: {dim:'wide banner 16:9', scene:'Panoramic night view of a packed football stadium, golden light rays, dark cinematic sky'},
@@ -1362,6 +1428,8 @@ function doCapture(kind){
    screenshots, images IA, vidéos IA, campagnes auto.
    ================================================================ */
 let aiHistory = [];
+let AI_STEP = 0;
+const AI_FLOW_LABELS = ['Prédiction du jour','Bilan de la veille','Publicité VIP','Textes multi-plateformes'];
 
 function aiAddMsg(who, html){
   const chat = document.getElementById('ai-chat');
@@ -1379,17 +1447,41 @@ function aiSetTasks(tasks){
   box.innerHTML = tasks.map(t=>`<div class="task ${t.done?'done':''}"><span class="st">${t.done?'✅':'⚪'}</span> ${t.label}</div>`).join('');
 }
 
-/* Détection d'intention par mots-clés pondérés (aucune API) */
+/* Normalisation : minuscules + accents retirés */
+function aiNorm(q){ return q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+
+/* Extraction des équipes citées dans la commande (via le dictionnaire FLAGS) */
+const TEAM_DISPLAY = {'bresil':'Brésil','norvege':'Norvège','coree du sud':'Corée du Sud','coree':'Corée du Sud','perou':'Pérou','equateur':'Équateur','senegal':'Sénégal','algerie':'Algérie','egypte':'Égypte','suede':'Suède','ecosse':'Écosse','republique tcheque':'République tchèque','tchequie':'Tchéquie','jamaique':'Jamaïque','haiti':'Haïti','nouvelle-zelande':'Nouvelle-Zélande','nouvelle zelande':'Nouvelle-Zélande','etats-unis':'États-Unis','etats unis':'États-Unis',"cote d'ivoire":"Côte d'Ivoire",'cote divoire':"Côte d'Ivoire"};
+function extractTeams(q){
+  const qn = aiNorm(q);
+  const keys = Object.keys(FLAGS).sort((a,b)=>b.length-a.length);
+  const found = [];
+  for(const k of keys){
+    if(qn.includes(k) && !found.some(f=>f.key===k || f.flag===FLAGS[k])){
+      const name = TEAM_DISPLAY[k] || k.split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
+      found.push({key:k, name, flag:FLAGS[k]});
+      if(found.length===2) break;
+    }
+  }
+  return found;
+}
+
+/* Détection d'intention — pondérée, sans accents, avec commandes d'action */
 function aiDetect(q){
-  q = q.toLowerCase();
+  q = aiNorm(q);
   const has = (...ks)=>ks.some(k=>q.includes(k));
+  if(has('suivant','continue','etape suivante','next')) return 'next';
+  if(/(passe|mets?|change|bascule|active).*(luxe|minimal|futur|sport)/.test(q) || /^(luxe|minimaliste?|futuriste?|sport)$/.test(q.trim())) return 'theme';
+  if(has('partage','partager','envoie sur','envoyer sur')) return 'share';
+  if(has('video','clip','mp4','genere la video')) return 'video';
+  if(has('exporte','telecharge','png','jpg')) return 'export';
   if(has('screenshot','capture','scan','lis ','lire','importe','photo')) return 'ocr';
-  if(has('tout','journée','journee','toute la','all')) return 'all';
-  if(has('bilan','récap','recap','résultat','resultat')) return 'bilan';
-  if(has('pub','publicit','vip','abonnement','offre','promo','affiche','story','bannière','banniere','miniature','campagne')) return 'pub';
-  if(has('texte','caption','légende','legende','hashtag','accroche')) return 'copy';
-  if(has('prono','prédiction','prediction','match','favori')) return 'pred';
-  if(has('variante','thème','theme','style','luxe','futur','sport','minimal')) return 'variant';
+  if(has('tout','journee','toute la','all')) return 'all';
+  if(has('bilan','recap','resultat')) return 'bilan';
+  if(has('pub','publicit','vip','abonnement','offre','promo','affiche','story','banniere','miniature','campagne')) return 'pub';
+  if(has('texte','caption','legende','hashtag','accroche')) return 'copy';
+  if(has('prono','prediction','match','favori')) return 'pred';
+  if(has('variante','theme','style')) return 'variant';
   return 'unknown';
 }
 
@@ -1404,6 +1496,37 @@ function aiSend(forced){
   const intent = aiDetect(q);
   setTimeout(()=>{ // petit délai pour l'effet "assistant"
     switch(intent){
+      case 'next':{
+        if(AI_STEP < 1 || AI_STEP >= 4){
+          aiAddMsg('a', "Dis d'abord « Prépare tous les contenus de la journée » pour lancer le programme, puis « suivant » pour enchaîner les étapes. 🚀");
+          break;
+        }
+        if(AI_STEP===1){ switchMode('bilan'); renderBilan(); aiAddMsg('a', "2️⃣ <b>Bilan de la veille</b> ouvert ✅ Mets à jour les scores et ✅/❌, exporte, puis dis « suivant »."); }
+        else if(AI_STEP===2){ switchMode('pub'); applyTpl('vip'); aiAddMsg('a', "3️⃣ <b>Publicité VIP</b> chargée ✅ Ajuste, exporte, puis dis « suivant »."); }
+        else if(AI_STEP===3){ switchMode('pub'); genCopy(); aiAddMsg('a', "4️⃣ <b>Textes multi-plateformes</b> générés ✅ Copie-les dans TikTok/Insta/Telegram. Programme du jour terminé 🖤"); }
+        AI_STEP++;
+        aiSetTasks(AI_FLOW_LABELS.map((l,i)=>({label:l, done:i<AI_STEP})));
+        break;
+      }
+      case 'theme':{
+        const m = aiNorm(q).match(/luxe|minimal|futur|sport/);
+        const t = m ? (m[0]==='minimal'?'minimal':m[0]==='futur'?'futur':m[0]) : 'luxe';
+        setTheme(t, document.querySelector('.themes .th-'+t));
+        aiAddMsg('a', "Thème <b>"+t+"</b> appliqué ✨ La carte a changé de style.");
+        break;
+      }
+      case 'export':
+        doCapture('png');
+        aiAddMsg('a', "📸 Export <b>PNG</b> lancé — l'image de la carte active arrive.");
+        break;
+      case 'share':
+        doShare(document.getElementById('btn-share'));
+        aiAddMsg('a', "📤 J'ouvre le <b>partage natif</b> — choisis TikTok, Insta ou Telegram dans le menu de ton téléphone.");
+        break;
+      case 'video':
+        exportVideo(document.getElementById('btn-video'));
+        aiAddMsg('a', "🎥 <b>Vidéo automatique</b> en cours : zoom cinématique + particules dorées. Elle te sera proposée en partage dès qu'elle est prête.");
+        break;
       case 'ocr':
         switchMode('pred');
         setTimeout(()=>{
@@ -1412,11 +1535,23 @@ function aiSend(forced){
         }, 300);
         aiAddMsg('a', "📸 J'ai ouvert la zone <b>Screenshot → remplissage auto</b> (en haut du module Prédiction). Dépose ta capture dedans ou clique pour choisir l'image. Je lirai les équipes, %, cotes et je remplirai la carte.<br><br><b>Important</b> : la lecture ne marche que dans le vrai fichier ouvert dans ton navigateur (pas dans l'aperçu), et il faut internet la 1re fois.");
         break;
-      case 'pred':
+      case 'pred':{
+        // Intelligence : équipes + drapeaux + heure extraits de ta phrase
+        const teams = extractTeams(q);
+        if(teams.length===2){
+          document.getElementById('p-n1').value = teams[0].name;
+          document.getElementById('p-n2').value = teams[1].name;
+          document.getElementById('p-d1').value = teams[0].flag;
+          document.getElementById('p-d2').value = teams[1].flag;
+        }
+        const h = aiNorm(q).match(/(\d{1,2})h(\d{2})?/);
+        if(h) document.getElementById('p-sub').value = 'Ce soir · ' + h[1] + 'h' + (h[2]||'00');
         switchMode('pred'); renderPred();
-        aiAddMsg('a', "<b>Prédiction du jour</b> préparée ✅<br>J'ai ouvert le module et rempli la carte. Ajuste les équipes/cotes si besoin, puis <b>PNG</b> pour exporter. Astuce : dépose une capture de ton site dans <b>Screenshot → remplissage auto</b> pour tout pré-remplir.");
-        aiSetTasks([{label:'Ouvrir le module Prédiction',done:true},{label:'Remplir la carte',done:true},{label:'Vérifier les données',done:false},{label:'Exporter en PNG',done:false}]);
+        const detail = teams.length===2 ? "J'ai reconnu <b>"+teams[0].flag+" "+teams[0].name+" vs "+teams[1].flag+" "+teams[1].name+"</b> et rempli la carte." : "Module ouvert et carte remplie.";
+        aiAddMsg('a', "<b>Prédiction du jour</b> préparée ✅<br>"+detail+" Ajuste les % et cotes, puis exporte (ou dis « exporte » / « partage » / « vidéo »).");
+        aiSetTasks([{label:'Ouvrir le module Prédiction',done:true},{label:'Remplir la carte',done:true},{label:'Vérifier les données',done:false},{label:'Exporter ou partager',done:false}]);
         break;
+      }
       case 'bilan':
         switchMode('bilan'); renderBilan();
         aiAddMsg('a', "<b>Bilan</b> prêt ✅<br>Module ouvert avec tes derniers matchs. Modifie les scores et ✅/❌, puis exporte.");
@@ -1449,9 +1584,10 @@ function aiSend(forced){
         aiAddMsg('a', "Tu peux basculer entre <b>Luxe</b>, <b>Minimaliste</b>, <b>Futuriste</b> et <b>Sport</b> avec les boutons de thème en haut. Lequel veux-tu ? Je te conseille <b>Luxe</b> pour le VIP et <b>Sport</b> pour les matchs.");
         break;
       case 'all':
+        AI_STEP = 1;
         switchMode('pred'); renderPred();
-        aiAddMsg('a', "<b>Programme du jour</b> 🚀<br>1️⃣ Prédiction du jour (ouverte maintenant)<br>2️⃣ Bilan de la veille<br>3️⃣ Publicité VIP<br>4️⃣ Textes pour tous les réseaux<br><br>Je commence par la prédiction. Dis « suivant » ou clique sur une suggestion pour enchaîner.");
-        aiSetTasks([{label:'Prédiction du jour',done:false},{label:'Bilan de la veille',done:false},{label:'Publicité VIP',done:false},{label:'Textes multi-plateformes',done:false}]);
+        aiAddMsg('a', "<b>Programme du jour</b> 🚀<br>1️⃣ Prédiction du jour (ouverte maintenant)<br>2️⃣ Bilan de la veille<br>3️⃣ Publicité VIP<br>4️⃣ Textes pour tous les réseaux<br><br>Quand une étape est finie, dis simplement <b>« suivant »</b> et j'enchaîne.");
+        aiSetTasks(AI_FLOW_LABELS.map((l,i)=>({label:l, done:i<AI_STEP})));
         break;
       default:
         aiAddMsg('a', "Je peux : préparer une <b>prédiction</b>, un <b>bilan</b>, une <b>publicité</b>, générer les <b>textes</b> de campagne, ou <b>tout préparer</b> d'un coup. Reformule avec un de ces mots, ou clique une suggestion ci-dessous. 🎯");
@@ -1536,6 +1672,148 @@ document.getElementById('reel').addEventListener('click', e=>{
   if(e.target.closest('#reel-ctrl')) return;
   document.getElementById('reel').classList.remove('hidectrl');
 });
+
+/* ================================================================
+   PARTAGE NATIF + EXPORT VIDÉO AUTOMATIQUE
+   ================================================================ */
+
+// Capture la carte active en canvas (base commune image/vidéo/partage)
+function captureCardCanvas(scale){
+  const ids = {pred:'card-pred', bilan:'card-bilan', pub:'card-pub'};
+  const node = document.getElementById(ids[MODE]);
+  return html2canvas(node, {scale:scale||3, backgroundColor:'#000', useCORS:true, logging:false});
+}
+
+/* 📤 PARTAGER — feuille de partage native (TikTok / Insta / Telegram / WhatsApp...) */
+function doShare(btn){
+  const old = btn.innerText;
+  btn.disabled = true; btn.innerText = '⏳ Préparation...';
+  captureCardCanvas(3).then(canvas=>{
+    canvas.toBlob(blob=>{
+      const file = new File([blob], 'black-paris-'+Date.now()+'.png', {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        navigator.share({files:[file], title:'BLACK PARIS'}).catch(()=>{});
+        btn.disabled=false; btn.innerText=old;
+      } else {
+        // Secours : téléchargement classique
+        const a=document.createElement('a');
+        a.href=URL.createObjectURL(blob); a.download=file.name; a.click();
+        btn.disabled=false; btn.innerText=old;
+        alert("Le partage direct n'est pas supporté sur ce navigateur — l'image a été téléchargée, tu peux la partager depuis ta galerie.");
+      }
+    },'image/png');
+  }).catch(err=>{
+    alert('⚠️ Partage impossible : '+(err.message||err));
+    btn.disabled=false; btn.innerText=old;
+  });
+}
+
+/* 🎥 VIDÉO AUTO — le Studio filme la carte : zoom cinématique + particules or + reflet */
+function exportVideo(btn){
+  if(typeof html2canvas==='undefined'){ alert('Module image non chargé (connexion requise).'); return; }
+  // Choix du format vidéo supporté par le téléphone
+  const mime = ['video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9','video/webm']
+    .find(m=>window.MediaRecorder && MediaRecorder.isTypeSupported(m));
+  if(!mime){
+    alert("Ton navigateur ne sait pas générer de vidéo automatiquement.\nUtilise le 🎬 Mode Reel + enregistrement d'écran.");
+    return;
+  }
+  const old = btn.innerText;
+  btn.disabled = true; btn.innerText = '⏳ Capture...';
+
+  captureCardCanvas(2).then(cardCanvas=>{
+    btn.innerText = '🎥 Génération...';
+    // Scène vidéo aux proportions de la carte
+    const W = 720, H = Math.round(W * cardCanvas.height / cardCanvas.width);
+    const cv = document.createElement('canvas'); cv.width=W; cv.height=H;
+    cv.style.cssText='position:fixed;left:-9999px;top:0;';
+    document.body.appendChild(cv);   // Safari exige un canvas attaché pour capturer le flux
+    const ctx = cv.getContext('2d');
+    const cleanup = ()=>{ try{cv.remove();}catch(e){} };
+
+    // Particules dorées
+    const parts = Array.from({length:42}, ()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      r:Math.random()*2.2+0.8, s:Math.random()*0.7+0.25, a:Math.random()*0.5+0.2
+    }));
+
+    // Première image immédiate : amorce le flux (fix iPhone)
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); ctx.drawImage(cardCanvas,0,0,W,H);
+    let stream, rec;
+    try{ stream = cv.captureStream(30); }catch(e){ stream = cv.captureStream(); }
+    try{ rec = new MediaRecorder(stream, {mimeType:mime, videoBitsPerSecond:6000000}); }
+    catch(e){
+      try{ rec = new MediaRecorder(stream); }
+      catch(e2){
+        cleanup();
+        alert("Ton navigateur bloque la génération vidéo automatique.\nUtilise le 🎬 Mode Reel + enregistrement d'écran.");
+        btn.disabled=false; btn.innerText=old; return;
+      }
+    }
+    const chunks = [];
+    rec.ondataavailable = e=>{ if(e.data.size) chunks.push(e.data); };
+    rec.onstop = ()=>{
+      cleanup();
+      const ext = mime.includes('mp4') ? 'mp4' : 'webm';
+      const blob = new Blob(chunks, {type:mime});
+      if(blob.size < 20000){
+        alert("⚠️ La vidéo générée est vide — ce navigateur ne gère pas bien la génération auto.\nUtilise le 🎬 Mode Reel + enregistrement d'écran en attendant.");
+        btn.disabled=false; btn.innerText=old;
+        return;
+      }
+      const file = new File([blob], 'black-paris-video-'+Date.now()+'.'+ext, {type:mime});
+      // Partage natif si possible, sinon téléchargement
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        navigator.share({files:[file], title:'BLACK PARIS'}).catch(()=>{
+          const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=file.name; a.click();
+        });
+      } else {
+        const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=file.name; a.click();
+      }
+      btn.disabled=false; btn.innerText='✅ Vidéo prête !';
+      setTimeout(()=>btn.innerText=old, 2000);
+    };
+    rec.start(200);   // collecte toutes les 200ms : force Safari à livrer les données
+
+    const DUR = 6000, t0 = performance.now();
+    setTimeout(()=>{ if(rec.state!=='inactive') rec.stop(); }, DUR+2500);  // sécurité anti-blocage
+    (function frame(now){
+      const t = Math.min((now-t0)/DUR, 1);
+      // Fond noir
+      ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+      // Zoom cinématique lent (1.00 → 1.08) + fondu d'entrée
+      const zoom = 1 + 0.08*t;
+      const alpha = Math.min(t/0.12, 1);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(W/2, H/2); ctx.scale(zoom, zoom); ctx.translate(-W/2, -H/2);
+      ctx.drawImage(cardCanvas, 0, 0, W, H);
+      ctx.restore();
+      // Reflet lumineux qui balaye (25% → 60% du temps)
+      if(t>0.25 && t<0.6){
+        const p=(t-0.25)/0.35, x=-W*0.6 + p*(W*2);
+        const g=ctx.createLinearGradient(x,0,x+W*0.35,H);
+        g.addColorStop(0,'rgba(255,255,255,0)');
+        g.addColorStop(0.5,'rgba(255,240,190,0.16)');
+        g.addColorStop(1,'rgba(255,255,255,0)');
+        ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+      }
+      // Particules dorées qui montent
+      parts.forEach(p=>{
+        p.y -= p.s; if(p.y<-4){ p.y=H+4; p.x=Math.random()*W; }
+        ctx.globalAlpha = p.a*alpha;
+        ctx.fillStyle='#ffd76a';
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fill();
+      });
+      ctx.globalAlpha=1;
+      if(t<1) requestAnimationFrame(frame);
+      else setTimeout(()=>rec.stop(), 120);
+    })(t0);
+  }).catch(err=>{
+    alert('⚠️ Vidéo impossible : '+(err.message||err));
+    btn.disabled=false; btn.innerText=old;
+  });
+}
 
 /* ---------- INIT ---------- */
 restoreState();
