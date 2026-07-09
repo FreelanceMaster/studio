@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLACK PARIS Studio V2</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --noir:#07070c;
+    --dore:#e8b83a;
+    --dore2:#f6d565;
+    --jaune:#ffd200;
+    --rouge:#ff3d3d;
+    --bleu:#2f7bff;
+    --cyan:#19d3ff;
+    --magenta:#e731c8;
+    --violet:#7b2ff7;
+    --vert:#2ee06a;
+    --gris:#9a9aa6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:#000;
+    color:#fff;
+    font-family:'Arial Narrow', Arial, sans-serif;
+    display:flex;flex-direction:column;align-items:center;
+    padding:20px 10px 80px;
+  }
+  h1{font-size:14px;letter-spacing:4px;text-transform:uppercase;color:var(--dore);margin-bottom:14px;}
+
+  /* ============ ONGLETS MODE ============ */
+  .tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;justify-content:center;}
+  .tabs button{
+    padding:10px 18px;background:#141419;border:1px solid #2b2b33;border-radius:30px;
+    color:var(--gris);font-weight:bold;font-size:12px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;
+  }
+  .tabs button.on{background:linear-gradient(135deg,var(--jaune),var(--dore));color:#000;border-color:transparent;}
+
+  /* ============ VARIANTES ============ */
+  .themes{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;justify-content:center;}
+  .themes button{
+    padding:7px 14px;border-radius:20px;font-size:11px;font-weight:bold;
+    text-transform:uppercase;letter-spacing:.5px;cursor:pointer;
+    background:#111117;color:#bbb;border:1.5px solid #2b2b33;
+  }
+  .themes button.on{color:#000;}
+  .themes .th-luxe.on{background:linear-gradient(135deg,#f6d565,#e8b83a);border-color:#e8b83a;}
+  .themes .th-minimal.on{background:#f4f2ec;border-color:#ccc;}
+  .themes .th-futur.on{background:linear-gradient(135deg,#19d3ff,#7b2ff7);border-color:#19d3ff;color:#fff;}
+  .themes .th-sport.on{background:linear-gradient(135deg,#2ee06a,#0f7a38);border-color:#2ee06a;color:#fff;}
+
+  /* ============ LAYOUT 2 COLONNES ============ */
+  .workspace{
+    display:grid;grid-template-columns:1fr;gap:22px;
+    width:100%;max-width:1180px;align-items:start;
+  }
+  @media(min-width:920px){
+    .workspace{grid-template-columns:minmax(380px,460px) 1fr;}
+    .preview{position:sticky;top:16px;display:flex;flex-direction:column;align-items:center;}
+  }
+
+  /* ============ PANNEAUX ============ */
+  .panel{
+    width:100%;background:#101016;border:1px solid #26262e;border-radius:14px;
+    padding:16px;margin-bottom:16px;
+  }
+  .panel h2{
+    font-size:11px;color:var(--dore);text-transform:uppercase;letter-spacing:2px;
+    margin-bottom:8px;border-bottom:1px solid #22222a;padding-bottom:6px;
+  }
+  .panel label{display:block;font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:1px;margin:10px 0 4px;}
+  .panel input,.panel select{
+    width:100%;background:#1a1a22;border:1px solid #2e2e38;color:#fff;
+    padding:9px 10px;border-radius:8px;font-size:14px;
+  }
+  .row2{display:flex;gap:10px;} .row2>div{flex:1;}
+  .row3{display:flex;gap:8px;} .row3>div{flex:1;}
+  .bilan-row{border-top:1px dashed #2c2c36;padding-top:8px;margin-top:8px;}
+  .dl{
+    margin-top:14px;width:100%;padding:14px;
+    background:linear-gradient(135deg,var(--jaune),var(--dore));
+    border:none;border-radius:10px;color:#000;font-weight:bold;font-size:14px;
+    letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+  }
+  .dl.sec{background:#1f1f28;color:#fff;}
+  .dl:active{transform:scale(.98);}
+  .hidden{display:none!important;}
+
+  /* ---- zone screenshot ---- */
+  .drop{
+    border:2px dashed #3a3a46;border-radius:12px;padding:18px;text-align:center;
+    color:var(--gris);font-size:12px;cursor:pointer;transition:.2s;
+  }
+  .drop.over{border-color:var(--jaune);color:var(--jaune);background:rgba(255,210,0,.05);}
+  .drop input{display:none;}
+  #ocr-status{font-size:11px;color:var(--cyan);margin-top:8px;min-height:14px;}
+  #ocr-raw{margin-top:8px;}
+  #ocr-raw summary{font-size:10px;color:var(--gris);cursor:pointer;}
+  #ocr-raw pre{font-size:10px;color:#888;white-space:pre-wrap;max-height:120px;overflow:auto;background:#0c0c12;padding:8px;border-radius:8px;margin-top:6px;}
+
+  /* ---- bibliothèque presets ---- */
+  .preset-item{
+    display:flex;align-items:center;gap:8px;background:#16161e;border:1px solid #26262e;
+    border-radius:8px;padding:8px 10px;margin-top:6px;
+  }
+  .preset-item .nm{flex:1;font-size:12px;font-weight:bold;}
+  .preset-item .md{font-size:9px;color:var(--gris);text-transform:uppercase;}
+  .preset-item button{
+    background:none;border:none;cursor:pointer;font-size:13px;padding:2px 4px;
+  }
+
+  /* ============ CARTE (thème via variables) ============ */
+  .card{
+    /* variables de thème */
+    --acc:var(--jaune);
+    --ink:#fff;
+    --panel:rgba(0,0,0,.55);
+    --muted:#9a9aa6;
+    --bd:#2b2b3a;
+    width:360px;height:640px;max-width:100%;
+    position:relative;overflow:hidden;
+    color:var(--ink);
+    background:
+      radial-gradient(ellipse 60% 35% at 85% 8%, rgba(231,49,200,.45) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 30% at 10% 15%, rgba(47,123,255,.4) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 40% at 50% 105%, rgba(123,47,247,.5) 0%, transparent 65%),
+      radial-gradient(ellipse 45% 25% at 95% 75%, rgba(25,211,255,.3) 0%, transparent 60%),
+      linear-gradient(180deg,#0b0b14 0%, #07070c 55%, #0a0616 100%);
+    display:flex;flex-direction:column;
+    padding:18px 16px 12px;
+  }
+  .card::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 12% 22%, rgba(255,255,255,.7) 0, transparent 100%),
+      radial-gradient(1px 1px at 78% 12%, rgba(255,210,0,.8) 0, transparent 100%),
+      radial-gradient(1.5px 1.5px at 88% 45%, rgba(255,255,255,.5) 0, transparent 100%),
+      radial-gradient(1px 1px at 25% 68%, rgba(25,211,255,.7) 0, transparent 100%),
+      radial-gradient(1.5px 1.5px at 60% 85%, rgba(231,49,200,.7) 0, transparent 100%),
+      radial-gradient(1px 1px at 40% 35%, rgba(255,255,255,.6) 0, transparent 100%);
+  }
+
+  /* ---- THEME MINIMALISTE ---- */
+  .card.theme-minimal{
+    --acc:#b8860b; --ink:#141414; --panel:rgba(255,255,255,.75); --muted:#666; --bd:#ddd;
+    background:linear-gradient(180deg,#f7f5ef 0%, #efece3 100%);
+  }
+  .card.theme-minimal::before{display:none;}
+  .card.theme-minimal .banner .main{background:none;color:#141414;-webkit-text-fill-color:#141414;text-shadow:none;}
+  .card.theme-minimal .banner .top{background:#141414;color:#fff;}
+  .card.theme-minimal .legal{color:#999;}
+
+  /* ---- THEME FUTURISTE ---- */
+  .card.theme-futur{
+    --acc:#19d3ff; --panel:rgba(4,10,26,.65); --bd:#123;
+    background:
+      radial-gradient(ellipse 70% 40% at 50% -5%, rgba(25,211,255,.35) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 50% 110%, rgba(123,47,247,.55) 0%, transparent 65%),
+      linear-gradient(180deg,#02030a 0%, #050718 100%);
+  }
+  .card.theme-futur .banner .main{background:linear-gradient(90deg,#fff 20%,#19d3ff 100%);-webkit-background-clip:text;background-clip:text;}
+
+  /* ---- THEME SPORT ---- */
+  .card.theme-sport{
+    --acc:#2ee06a; --panel:rgba(1,20,8,.6); --bd:#12351f;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 40px, transparent 40px 80px),
+      radial-gradient(ellipse 80% 50% at 50% 115%, rgba(46,224,106,.35) 0%, transparent 65%),
+      linear-gradient(180deg,#03140a 0%, #010b05 100%);
+  }
+  .card.theme-sport .banner .main{background:linear-gradient(90deg,#fff 25%,#2ee06a 100%);-webkit-background-clip:text;background-clip:text;}
+
+  /* ---- entête marque ---- */
+  .bp-head{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;}
+  .bp-logo{font-family:Georgia,serif;font-size:30px;font-weight:bold;line-height:1;}
+  .bp-logo .b{color:var(--ink);} .bp-logo .p{color:var(--acc);}
+  .bp-name{font-size:9px;letter-spacing:3px;color:var(--ink);font-weight:bold;}
+  .bp-name span{color:var(--acc);}
+  .badge{
+    width:74px;height:74px;border-radius:50%;
+    background:var(--panel);
+    border:2.5px solid var(--acc);
+    box-shadow:0 0 18px color-mix(in srgb, var(--acc) 55%, transparent);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  }
+  .badge .t{font-size:7px;letter-spacing:.5px;color:var(--ink);font-weight:bold;text-transform:uppercase;line-height:1.2;}
+  .badge .v{font-size:20px;font-weight:900;color:var(--acc);font-style:italic;}
+
+  /* ---- bandeau titre ---- */
+  .banner{position:relative;z-index:2;margin:14px auto 4px;text-align:center;}
+  .banner .top{
+    display:inline-block;background:linear-gradient(90deg,var(--bleu),var(--rouge));
+    transform:skewX(-8deg);padding:4px 16px;font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#fff;
+  }
+  .banner .main{
+    font-size:38px;font-weight:900;font-style:italic;text-transform:uppercase;line-height:1;
+    background:linear-gradient(90deg,#fff 30%, var(--rouge) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 4px 14px rgba(0,0,0,.6);margin-top:6px;
+  }
+  .banner .sub{
+    display:inline-block;margin-top:6px;background:var(--acc);color:#000;
+    transform:skewX(-8deg);padding:4px 18px;font-size:12px;font-weight:900;letter-spacing:1px;text-transform:uppercase;
+  }
+
+  /* ---- versus ---- */
+  .versus{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:12px;margin:18px 0 10px;}
+  .team{width:120px;text-align:center;}
+  .flag{font-size:44px;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4));}
+  .tname{font-size:14px;font-weight:900;text-transform:uppercase;font-style:italic;margin-top:6px;letter-spacing:.5px;color:var(--ink);}
+  .vs{font-size:16px;font-weight:900;font-style:italic;color:var(--acc);text-shadow:0 0 12px color-mix(in srgb, var(--acc) 70%, transparent);}
+
+  .proba{position:relative;z-index:2;display:flex;gap:6px;margin-bottom:12px;}
+  .pcell{flex:1;border-radius:10px;padding:8px 4px;text-align:center;background:var(--panel);border:1.5px solid transparent;}
+  .pcell.c1{border-color:var(--vert);box-shadow:0 0 10px rgba(46,224,106,.3);}
+  .pcell.cn{border-color:var(--muted);}
+  .pcell.c2{border-color:var(--rouge);box-shadow:0 0 10px rgba(255,61,61,.25);}
+  .pcell .pv{font-size:19px;font-weight:900;font-style:italic;}
+  .pcell.c1 .pv{color:var(--vert);} .pcell.cn .pv{color:var(--muted);} .pcell.c2 .pv{color:var(--rouge);}
+  .pcell .pl{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+  .pcell .pc{font-size:8px;color:var(--acc);margin-top:2px;}
+
+  .verdict{
+    position:relative;z-index:2;
+    background:color-mix(in srgb, var(--acc) 14%, transparent);
+    border:1.5px solid var(--acc);
+    box-shadow:0 0 20px color-mix(in srgb, var(--acc) 30%, transparent);
+    border-radius:12px;padding:10px;text-align:center;margin-bottom:12px;
+  }
+  .verdict .l{font-size:8px;letter-spacing:2px;color:var(--acc);text-transform:uppercase;font-weight:bold;}
+  .verdict .v{font-size:20px;font-weight:900;font-style:italic;text-transform:uppercase;color:var(--ink);margin-top:3px;}
+  .verdict .c{font-size:10px;color:var(--acc);margin-top:3px;font-weight:bold;}
+
+  .neons{position:relative;z-index:2;display:flex;flex-direction:column;gap:7px;margin-bottom:auto;}
+  .neon{display:flex;align-items:center;gap:10px;background:var(--panel);border-radius:12px;padding:8px 12px;border:1.5px solid;}
+  .neon:nth-child(1){border-color:var(--magenta);box-shadow:0 0 10px rgba(231,49,200,.3);}
+  .neon:nth-child(2){border-color:var(--cyan);box-shadow:0 0 10px rgba(25,211,255,.3);}
+  .neon:nth-child(3){border-color:var(--vert);box-shadow:0 0 10px rgba(46,224,106,.3);}
+  .card.theme-minimal .neon{box-shadow:none;border-color:var(--bd);}
+  .neon .ic{font-size:16px;}
+  .neon .tx{flex:1;}
+  .neon .tt{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--ink);}
+  .neon .val{font-size:15px;font-weight:900;font-style:italic;color:var(--acc);}
+
+  /* ---- bilan ---- */
+  .bilan-list{position:relative;z-index:2;display:flex;flex-direction:column;gap:7px;margin:14px 0 auto;}
+  .brow{
+    display:flex;align-items:center;gap:8px;background:var(--panel);
+    border:1px solid var(--bd);border-left:3px solid var(--vert);
+    border-radius:10px;padding:8px 10px;
+  }
+  .brow.ko{border-left-color:var(--rouge);}
+  .brow .bfl{font-size:18px;}
+  .brow .bmid{flex:1;}
+  .brow .bteams{font-size:11px;font-weight:900;text-transform:uppercase;color:var(--ink);}
+  .brow .bscore{font-size:10px;color:var(--acc);font-weight:bold;}
+  .brow .bpron{font-size:8.5px;color:var(--muted);text-transform:uppercase;}
+  .brow .bres{font-size:18px;}
+  .score-strip{position:relative;z-index:2;display:flex;gap:6px;margin-bottom:12px;margin-top:14px;}
+  .sc{
+    flex:1;text-align:center;border-radius:10px;padding:8px 4px;
+    background:var(--panel);border:1.5px solid var(--acc);
+    box-shadow:0 0 12px color-mix(in srgb, var(--acc) 25%, transparent);
+  }
+  .sc .n{font-size:20px;font-weight:900;font-style:italic;color:var(--acc);}
+  .sc .l{font-size:8px;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+
+  /* ---- pied ---- */
+  .foot{position:relative;z-index:2;margin-top:10px;}
+  .foot-row{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .qr-frame{
+    background:#fff;padding:4px;border-radius:10px;
+    border:2px solid var(--acc);
+    box-shadow:0 0 14px color-mix(in srgb, var(--acc) 50%, transparent);
+    line-height:0;flex-shrink:0;
+  }
+  .qr-frame img,.qr-frame canvas{width:52px!important;height:52px!important;display:block;}
+  .foot-tx{flex:1;}
+  .socials{display:flex;flex-direction:column;gap:2px;font-size:9.5px;font-weight:bold;color:var(--ink);}
+  .socials span{color:var(--acc);}
+  .scan{font-size:8px;color:var(--acc);font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-top:3px;}
+  .legal{text-align:center;font-size:7.5px;color:#777;letter-spacing:.5px;}
+  .strip{
+    margin-top:8px;background:var(--acc);color:#000;text-align:center;
+    font-size:9px;font-weight:900;letter-spacing:2px;text-transform:uppercase;
+    padding:5px;transform:skewX(-6deg);
+  }
+
+  /* ============ MODULE PUBLICITÉ ============ */
+  .fmt-btns{display:flex;gap:6px;margin:8px 0;}
+  .fmt-btns button{
+    flex:1;padding:8px 6px;border-radius:8px;font-size:10px;font-weight:bold;
+    text-transform:uppercase;cursor:pointer;background:#1a1a22;color:#bbb;border:1px solid #2e2e38;
+  }
+  .fmt-btns button.on{background:linear-gradient(135deg,var(--jaune),var(--dore));color:#000;border-color:transparent;}
+  .tpl-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0;}
+  .tpl-btns button{
+    padding:9px 6px;border-radius:8px;font-size:10px;font-weight:bold;
+    text-transform:uppercase;cursor:pointer;background:#1a1a22;color:#ddd;border:1px solid #2e2e38;
+  }
+  .tpl-btns button:hover{border-color:var(--dore);color:var(--dore2);}
+  .copy-head{display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px;}
+  .copy-head b{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#fff;}
+  .copy-head button{background:#26262e;border:none;color:var(--dore2);font-size:10px;padding:4px 10px;border-radius:6px;cursor:pointer;}
+  .panel textarea{
+    width:100%;min-height:74px;background:#1a1a22;border:1px solid #2e2e38;color:#ddd;
+    border-radius:8px;padding:8px;font-size:12px;font-family:Arial,sans-serif;resize:vertical;
+  }
+
+  /* formats de la carte pub */
+  #card-pub.fmt-11{height:360px;}
+  #card-pub.fmt-169{width:568px;height:320px;}
+  #card-pub.fmt-11 .neons, #card-pub.fmt-169 .neons{display:none;}
+  #card-pub.fmt-11 .banner .main{font-size:26px;}
+  #card-pub.fmt-11 .hero .big{font-size:32px;}
+  #card-pub.fmt-11 .foot .strip, #card-pub.fmt-169 .foot .strip{display:none;}
+  #card-pub.fmt-11 .legal{display:none;}
+  #card-pub.fmt-169 .banner{margin:4px auto 2px;}
+  #card-pub.fmt-169 .banner .main{font-size:22px;}
+  #card-pub.fmt-169 .hero{margin:4px 0;}
+  #card-pub.fmt-169 .hero .big{font-size:30px;}
+  #card-pub.fmt-169 .legal{display:none;}
+  #card-pub.fmt-169 .cta{margin:2px 0 6px;}
+
+  /* blocs pub */
+  .hero{position:relative;z-index:2;text-align:center;margin:8px 0;}
+  .hero .big{
+    font-size:42px;font-weight:900;font-style:italic;text-transform:uppercase;line-height:1;
+    color:var(--acc);text-shadow:0 0 24px color-mix(in srgb, var(--acc) 60%, transparent);
+  }
+  .hero .prix{
+    display:inline-block;margin-top:8px;padding:6px 20px;border-radius:30px;
+    background:var(--acc);color:#000;font-size:18px;font-weight:900;
+  }
+  .promo{
+    position:relative;z-index:2;text-align:center;margin:6px auto 8px;
+    border:2px dashed var(--acc);border-radius:10px;padding:7px 14px;width:fit-content;
+    font-size:15px;font-weight:900;letter-spacing:3px;color:var(--ink);
+    background:color-mix(in srgb, var(--acc) 10%, transparent);
+  }
+  .cta{position:relative;z-index:2;text-align:center;margin:4px 0 10px;}
+  .cta span{
+    display:inline-block;background:var(--acc);color:#000;
+    font-weight:900;text-transform:uppercase;letter-spacing:1px;
+    padding:11px 26px;border-radius:30px;font-size:14px;
+    box-shadow:0 0 22px color-mix(in srgb, var(--acc) 55%, transparent);
+  }
+  #pub-bg{
+    position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;
+    opacity:.5;display:none;
+  }
+  #card-pub .shade{
+    position:absolute;inset:0;z-index:1;display:none;
+    background:linear-gradient(180deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.2) 40%, rgba(0,0,0,.72) 100%);
+  }
+  #card-pub.has-bg #pub-bg, #card-pub.has-bg .shade{display:block;}
+
+  /* ============ AI DIRECTOR ============ */
+  .ai-wrap{width:100%;max-width:760px;margin:0 auto;}
+  .ai-hero{
+    text-align:center;padding:14px;margin-bottom:14px;
+    background:linear-gradient(135deg,rgba(232,184,58,.12),rgba(123,47,247,.12));
+    border:1px solid #2b2b33;border-radius:14px;
+  }
+  .ai-hero .t{font-size:16px;font-weight:900;font-style:italic;color:var(--dore2);letter-spacing:1px;}
+  .ai-hero .s{font-size:11px;color:var(--gris);margin-top:4px;}
+  .ai-chat{
+    background:#0c0c12;border:1px solid #26262e;border-radius:14px;
+    padding:14px;min-height:220px;max-height:340px;overflow-y:auto;margin-bottom:12px;
+  }
+  .msg{display:flex;margin-bottom:10px;}
+  .msg .b{max-width:82%;padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.4;font-family:Arial,sans-serif;}
+  .msg.u{justify-content:flex-end;}
+  .msg.u .b{background:linear-gradient(135deg,var(--jaune),var(--dore));color:#000;border-bottom-right-radius:4px;font-weight:bold;}
+  .msg.a .b{background:#17171f;border:1px solid #2b2b33;color:#eee;border-bottom-left-radius:4px;}
+  .msg.a .b b{color:var(--dore2);}
+  .ai-suggest{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+  .ai-suggest button{
+    padding:7px 12px;border-radius:20px;font-size:11px;cursor:pointer;
+    background:#16161e;color:#ddd;border:1px solid #2b2b33;font-family:Arial,sans-serif;
+  }
+  .ai-suggest button:hover{border-color:var(--dore);color:var(--dore2);}
+  .ai-input{display:flex;gap:8px;}
+  .ai-input input{
+    flex:1;background:#1a1a22;border:1px solid #2e2e38;color:#fff;
+    padding:12px;border-radius:10px;font-size:14px;
+  }
+  .ai-input button{
+    padding:12px 18px;border:none;border-radius:10px;cursor:pointer;
+    background:linear-gradient(135deg,var(--jaune),var(--dore));color:#000;font-weight:bold;
+  }
+  .ai-tasks{margin-top:14px;background:#0c0c12;border:1px solid #26262e;border-radius:14px;padding:14px;}
+  .ai-tasks h3{font-size:11px;color:var(--dore);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;}
+  .task{display:flex;align-items:center;gap:10px;font-size:13px;padding:6px 0;border-bottom:1px solid #1b1b22;font-family:Arial,sans-serif;}
+  .task:last-child{border-bottom:none;}
+  .task .st{font-size:15px;}
+  .task.done{color:#666;text-decoration:line-through;}
+
+  /* ============ MODE REEL (overlay plein écran animé) ============ */
+  #reel{
+    position:fixed;inset:0;z-index:9999;display:none;background:#000;
+  }
+  #reel.on{display:block;}
+  #reel-stage{
+    position:absolute;top:50%;left:50%;
+    width:360px;height:640px;
+    transform:translate(-50%,-50%) scale(1);
+    transform-origin:center center;
+    border-radius:14px;overflow:hidden;
+    box-shadow:0 0 60px rgba(232,184,58,.25);
+  }
+  #reel-stage > .card{position:absolute;inset:0;width:360px;height:640px;border-radius:14px;}
+  #reel-ctrl{
+    position:absolute;bottom:16px;left:0;right:0;z-index:4;
+    display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 10px;
+    transition:opacity .3s;
+  }
+  #reel.hidectrl #reel-ctrl, #reel.hidectrl #reel-hint{opacity:0;pointer-events:none;}
+  #reel-ctrl button{
+    padding:11px 18px;border-radius:24px;border:none;cursor:pointer;font-weight:bold;font-size:13px;
+    background:#1c1c24;color:#fff;border:1px solid #33333d;
+  }
+  #reel-ctrl button.go{background:linear-gradient(135deg,var(--jaune),var(--dore));color:#000;border:none;}
+  #reel-count{
+    position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+    font-size:120px;font-weight:900;font-style:italic;color:var(--jaune);
+    text-shadow:0 0 40px rgba(255,210,0,.7);z-index:5;background:rgba(0,0,0,.55);
+  }
+  #reel-hint{
+    position:absolute;bottom:64px;left:0;right:0;z-index:4;
+    color:#999;font-size:11px;text-align:center;padding:0 20px;
+    font-family:Arial,sans-serif;transition:opacity .3s;
+  }
+
+  /* animations séquencées : on ajoute la classe .play au stage */
+  #reel-stage.play .bp-head{animation:rIn .6s .1s both;}
+  #reel-stage.play .banner{animation:rPop .6s .5s both;}
+  #reel-stage.play .versus{animation:rIn .6s 1.0s both;}
+  #reel-stage.play .proba,
+  #reel-stage.play .score-strip{animation:rIn .6s 1.6s both;}
+  #reel-stage.play .verdict,
+  #reel-stage.play .hero{animation:rPop .7s 2.3s both;}
+  #reel-stage.play .neons .neon:nth-child(1){animation:rIn .5s 3.0s both;}
+  #reel-stage.play .neons .neon:nth-child(2){animation:rIn .5s 3.3s both;}
+  #reel-stage.play .neons .neon:nth-child(3){animation:rIn .5s 3.6s both;}
+  #reel-stage.play .bilan-list .brow{animation:rIn .5s 3.0s both;}
+  #reel-stage.play .cta{animation:rPulse 1s 4.0s infinite;}
+  #reel-stage.play .foot{animation:rIn .6s 4.0s both;}
+  @keyframes rIn{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}
+  @keyframes rPop{0%{opacity:0;transform:scale(.7);}60%{transform:scale(1.08);}100%{opacity:1;transform:scale(1);}}
+  @keyframes rPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+</style>
+</head>
+<body>
+
+<h1>⚫ Black Paris Studio V2</h1>
+
+<div class="tabs">
+  <button id="tab-ai" onclick="switchMode('ai')">🧠 AI Director</button>
+  <button id="tab-pred" class="on" onclick="switchMode('pred')">Prédiction du jour</button>
+  <button id="tab-bilan" onclick="switchMode('bilan')">Bilan du jour</button>
+  <button id="tab-pub" onclick="switchMode('pub')">📣 Publicité</button>
+</div>
+
+<div class="themes">
+  <button class="th-luxe on" onclick="setTheme('luxe',this)">✨ Luxe</button>
+  <button class="th-minimal" onclick="setTheme('minimal',this)">◻ Minimaliste</button>
+  <button class="th-futur" onclick="setTheme('futur',this)">🔮 Futuriste</button>
+  <button class="th-sport" onclick="setTheme('sport',this)">⚽ Sport</button>
+</div>
+
+<!-- ================= AI DIRECTOR (pleine largeur) ================= -->
+<div class="ai-wrap hidden" id="panel-ai">
+  <div class="ai-hero">
+    <div class="t">🧠 BLACK PARIS AI DIRECTOR</div>
+    <div class="s">Le centre de contrôle. Dis ce que tu veux, il prépare les modules pour toi.</div>
+  </div>
+  <div class="ai-chat" id="ai-chat"></div>
+  <div class="ai-suggest">
+    <button onclick="aiSend('Prépare la prédiction du jour')">🎯 Prédiction du jour</button>
+    <button onclick="aiSend('Prépare un bilan')">📊 Bilan</button>
+    <button onclick="aiSend('Crée une publicité VIP')">💎 Pub VIP</button>
+    <button onclick="aiSend('Crée une story Instagram')">📱 Story Insta</button>
+    <button onclick="aiSend('Génère les textes de campagne')">📝 Textes</button>
+    <button onclick="aiSend('Prépare tous les contenus de la journée')">🚀 Tout préparer</button>
+  </div>
+  <div class="ai-input">
+    <input id="ai-text" placeholder="Ex : prépare la prédiction du jour, crée une pub TikTok..." onkeydown="if(event.key==='Enter')aiSend()">
+    <button onclick="aiSend()">Envoyer</button>
+  </div>
+  <div class="ai-tasks">
+    <h3>📋 Tableau des tâches</h3>
+    <div id="ai-task-list"><div class="task"><span class="st">⚪</span> Aucune tâche pour l'instant.</div></div>
+  </div>
+</div>
+
+<div class="workspace" id="workspace">
+<!-- ================= COLONNE GAUCHE : GRILLE DE REMPLISSAGE ================= -->
+<div class="controls">
+
+  <!-- SCREENSHOT → TEMPLATE -->
+  <div class="panel">
+    <h2>📸 Screenshot → remplissage auto</h2>
+    <div class="drop" id="drop" onclick="document.getElementById('shot').click()">
+      Dépose ici une capture de ton site<br>(ou clique pour choisir une image)
+      <input type="file" id="shot" accept="image/*">
+    </div>
+    <div id="ocr-status"></div>
+    <details id="ocr-raw" class="hidden">
+      <summary>Voir le texte détecté (pour vérifier)</summary>
+      <pre id="ocr-text"></pre>
+    </details>
+  </div>
+
+  <!-- PANNEAU PREDICTION -->
+  <div class="panel" id="panel-pred">
+    <h2>🎯 Données de la prédiction</h2>
+    <label>Sous-titre bandeau</label>
+    <input id="p-comp" value="Coupe du Monde 2026" oninput="renderPred()">
+    <label>Titre principal</label>
+    <input id="p-titre" value="Prédiction du jour" oninput="renderPred()">
+    <label>Bandeau accent (phase / groupe / heure)</label>
+    <input id="p-sub" value="Quart de finale · 21h00" oninput="renderPred()">
+    <div class="row2">
+      <div><label>Drapeau 1</label><input id="p-d1" value="🇫🇷" oninput="renderPred()"></div>
+      <div><label>Drapeau 2</label><input id="p-d2" value="🇧🇷" oninput="renderPred()"></div>
+    </div>
+    <div class="row2">
+      <div><label>Équipe 1</label><input id="p-n1" value="France" oninput="renderPred()"></div>
+      <div><label>Équipe 2</label><input id="p-n2" value="Brésil" oninput="renderPred()"></div>
+    </div>
+    <div class="row3">
+      <div><label>% Victoire 1</label><input id="p-v1" value="52%" oninput="renderPred()"></div>
+      <div><label>% Nul</label><input id="p-vn" value="24%" oninput="renderPred()"></div>
+      <div><label>% Victoire 2</label><input id="p-v2" value="24%" oninput="renderPred()"></div>
+    </div>
+    <div class="row3">
+      <div><label>Cote 1</label><input id="p-c1" value="1.92" oninput="renderPred()"></div>
+      <div><label>Cote N</label><input id="p-cn" value="4.16" oninput="renderPred()"></div>
+      <div><label>Cote 2</label><input id="p-c2" value="4.10" oninput="renderPred()"></div>
+    </div>
+    <label>Verdict (prédiction)</label>
+    <input id="p-verd" value="Victoire France" oninput="renderPred()">
+    <label>Ligne confiance</label>
+    <input id="p-conf" value="Confiance 68% · Cote juste 1.92 · Fiabilité bonne" oninput="renderPred()">
+    <label>Badge taux de réussite</label>
+    <input id="p-badge" value="70%" oninput="renderPred()">
+    <div class="row2">
+      <div><label>Stat 1 — titre</label><input id="p-s1t" value="Niveau global" oninput="renderPred()"></div>
+      <div><label>Stat 1 — valeur</label><input id="p-s1v" value="1875 vs 1760" oninput="renderPred()"></div>
+    </div>
+    <div class="row2">
+      <div><label>Stat 2 — titre</label><input id="p-s2t" value="Puissance offensive" oninput="renderPred()"></div>
+      <div><label>Stat 2 — valeur</label><input id="p-s2v" value="2.41 vs 1.86" oninput="renderPred()"></div>
+    </div>
+    <div class="row2">
+      <div><label>Stat 3 — titre</label><input id="p-s3t" value="Forme (5 derniers)" oninput="renderPred()"></div>
+      <div><label>Stat 3 — valeur</label><input id="p-s3v" value="V V V N V" oninput="renderPred()"></div>
+    </div>
+    <label>Lien du QR code</label>
+    <input id="p-qr" value="https://linktr.ee/BlackPAriss" oninput="renderPred()">
+  </div>
+
+  <!-- PANNEAU BILAN -->
+  <div class="panel hidden" id="panel-bilan">
+    <h2>📊 Données du bilan</h2>
+    <label>Titre principal</label>
+    <input id="b-titre" value="Bilan du jour" oninput="renderBilan()">
+    <label>Bandeau accent (date)</label>
+    <input id="b-sub" value="Mardi 7 juillet" oninput="renderBilan()">
+    <div class="row3">
+      <div><label>✅ Validés</label><input id="b-ok" value="4" oninput="renderBilan()"></div>
+      <div><label>❌ Manqués</label><input id="b-ko" value="1" oninput="renderBilan()"></div>
+      <div><label>Taux</label><input id="b-taux" value="80%" oninput="renderBilan()"></div>
+    </div>
+    <label>Badge taux global</label>
+    <input id="b-badge" value="70%" oninput="renderBilan()">
+    <label>Lien du QR code</label>
+    <input id="b-qr" value="https://linktr.ee/BlackPAriss" oninput="renderBilan(false)">
+    <div id="bilan-rows"></div>
+    <button class="dl sec" onclick="addRow()">＋ Ajouter un match</button>
+  </div>
+
+  <!-- PANNEAU PUBLICITÉ -->
+  <div class="panel hidden" id="panel-pub">
+    <h2>📣 Création publicitaire</h2>
+
+    <label>Modèles de campagne (1 clic = pré-rempli)</label>
+    <div class="tpl-btns">
+      <button onclick="applyTpl('vip')">💎 Pub VIP</button>
+      <button onclick="applyTpl('offre')">🔥 Offre spéciale</button>
+      <button onclick="applyTpl('code')">🎟️ Code promo</button>
+      <button onclick="applyTpl('win')">✅ Résultat gagnant</button>
+      <button onclick="applyTpl('match')">⚽ Match du jour</button>
+      <button onclick="applyTpl('launch')">🚀 Lancement</button>
+    </div>
+
+    <label>Format</label>
+    <div class="fmt-btns">
+      <button class="on" data-f="916" onclick="setFmt('916',this)">9:16 TikTok/Story</button>
+      <button data-f="11" onclick="setFmt('11',this)">1:1 Insta/Telegram</button>
+      <button data-f="169" onclick="setFmt('169',this)">16:9 YouTube/FB</button>
+    </div>
+
+    <label>Bandeau haut</label>
+    <input id="pub-comp" value="Coupe du Monde 2026" oninput="renderPub()">
+    <label>Titre principal</label>
+    <input id="pub-titre" value="Abonnement VIP" oninput="renderPub()">
+    <label>Bandeau accent</label>
+    <input id="pub-sub" value="Offre limitée · Fin de CDM" oninput="renderPub()">
+    <label>Gros texte (accroche)</label>
+    <input id="pub-hero" value="PASS FINALE" oninput="renderPub()">
+    <div class="row2">
+      <div><label>Prix / valeur (vide = masqué)</label><input id="pub-prix" value="14,90 €" oninput="renderPub()"></div>
+      <div><label>Code promo (vide = masqué)</label><input id="pub-code" value="" oninput="renderPub()"></div>
+    </div>
+    <label>Point fort 1</label>
+    <input id="pub-p1" value="Pronos détaillés chaque jour" oninput="renderPub()">
+    <label>Point fort 2</label>
+    <input id="pub-p2" value="Analyses 1N2 · BTTS · Plus/Moins" oninput="renderPub()">
+    <label>Point fort 3</label>
+    <input id="pub-p3" value="Canal Telegram privé" oninput="renderPub()">
+    <label>Bouton d'action (CTA)</label>
+    <input id="pub-cta" value="Rejoins le VIP →" oninput="renderPub()">
+    <div class="row2">
+      <div><label>Badge — texte</label><input id="pub-badget" value="Accès VIP" oninput="renderPub()"></div>
+      <div><label>Badge — valeur</label><input id="pub-badge" value="★" oninput="renderPub()"></div>
+    </div>
+    <label>Lien du QR code</label>
+    <input id="pub-qr" value="https://linktr.ee/BlackPAriss" oninput="renderPub()">
+
+    <label>Image de fond (ex: visuel généré par IA)</label>
+    <input type="file" id="pub-bgfile" accept="image/*">
+    <button class="dl sec" onclick="clearBg()">✖ Retirer le fond</button>
+  </div>
+
+  <!-- PANNEAU CAMPAGNE : TEXTES + PROMPTS IA -->
+  <div class="panel hidden" id="panel-pub2">
+    <h2>🤖 Campagne automatique</h2>
+
+    <button class="dl" onclick="genCopy()">📝 Générer les textes publicitaires</button>
+
+    <div class="copy-head"><b>TikTok</b><button onclick="copyTxt('ta-tiktok')">📋 Copier</button></div>
+    <textarea id="ta-tiktok" placeholder="Clique sur Générer..."></textarea>
+    <div class="copy-head"><b>Instagram</b><button onclick="copyTxt('ta-insta')">📋 Copier</button></div>
+    <textarea id="ta-insta"></textarea>
+    <div class="copy-head"><b>Telegram</b><button onclick="copyTxt('ta-tg')">📋 Copier</button></div>
+    <textarea id="ta-tg"></textarea>
+    <div class="copy-head"><b>X / Facebook</b><button onclick="copyTxt('ta-x')">📋 Copier</button></div>
+    <textarea id="ta-x"></textarea>
+
+    <label style="margin-top:16px;">Prompt IA pour générer un visuel de fond</label>
+    <select id="sel-prompt">
+      <option value="affiche">Affiche premium BLACK PARIS</option>
+      <option value="insta">Publicité Instagram VIP</option>
+      <option value="banniere">Bannière Facebook</option>
+      <option value="youtube">Miniature YouTube</option>
+      <option value="telegram">Couverture Telegram</option>
+      <option value="tiktok">Publicité TikTok</option>
+    </select>
+    <button class="dl sec" onclick="genPrompt()">✨ Générer le prompt</button>
+    <div class="copy-head"><b>Prompt à coller dans ton IA d'images</b><button onclick="copyTxt('ta-prompt')">📋 Copier</button></div>
+    <textarea id="ta-prompt" style="min-height:110px;" placeholder="Le prompt apparaîtra ici. Colle-le dans ton générateur d'images, puis importe le résultat comme image de fond."></textarea>
+  </div>
+
+  <!-- BIBLIOTHÈQUE -->
+  <div class="panel">
+    <h2>📚 Bibliothèque de préréglages</h2>
+    <div class="row2">
+      <div><input id="preset-name" placeholder="Nom (ex: Quart France)"></div>
+      <div><button class="dl" style="margin-top:0;padding:10px;" onclick="savePreset()">💾 Sauver</button></div>
+    </div>
+    <label>Rechercher</label>
+    <input id="preset-search" placeholder="Filtrer..." oninput="listPresets()">
+    <div id="preset-list"></div>
+  </div>
+</div>
+
+<!-- ================= COLONNE DROITE : RÉSULTAT ================= -->
+<div class="preview">
+
+  <!-- CARTE PREDICTION -->
+  <div class="card" id="card-pred">
+    <div class="bp-head">
+      <div>
+        <div class="bp-logo"><span class="b">B</span><span class="p">P</span></div>
+        <div class="bp-name">BLACK <span>PARIS</span></div>
+      </div>
+      <div class="badge">
+        <div class="t">Taux de<br>réussite</div>
+        <div class="v" id="o-badge">70%</div>
+      </div>
+    </div>
+    <div class="banner">
+      <div class="top" id="o-comp">Coupe du Monde 2026</div>
+      <div class="main" id="o-titre">Prédiction du jour</div>
+      <div class="sub" id="o-sub">Quart de finale · 21h00</div>
+    </div>
+    <div class="versus">
+      <div class="team"><span class="flag" id="o-d1">🇫🇷</span><span class="tname" id="o-n1">France</span></div>
+      <span class="vs">VS</span>
+      <div class="team"><span class="flag" id="o-d2">🇧🇷</span><span class="tname" id="o-n2">Brésil</span></div>
+    </div>
+    <div class="proba">
+      <div class="pcell c1"><div class="pv" id="o-v1">52%</div><div class="pl">Victoire 1</div><div class="pc" id="o-c1">Cote juste : 1.92</div></div>
+      <div class="pcell cn"><div class="pv" id="o-vn">24%</div><div class="pl">Nul</div><div class="pc" id="o-cn">Cote juste : 4.16</div></div>
+      <div class="pcell c2"><div class="pv" id="o-v2">24%</div><div class="pl">Victoire 2</div><div class="pc" id="o-c2">Cote juste : 4.10</div></div>
+    </div>
+    <div class="verdict">
+      <div class="l">★ Prédiction Black Paris ★</div>
+      <div class="v" id="o-verd">Victoire France</div>
+      <div class="c" id="o-conf">Confiance 68% · Cote juste 1.92 · Fiabilité bonne</div>
+    </div>
+    <div class="neons">
+      <div class="neon"><span class="ic">📊</span><span class="tx"><div class="tt" id="o-s1t">Niveau global</div></span><span class="val" id="o-s1v">1875 vs 1760</span></div>
+      <div class="neon"><span class="ic">⚡</span><span class="tx"><div class="tt" id="o-s2t">Puissance offensive</div></span><span class="val" id="o-s2v">2.41 vs 1.86</span></div>
+      <div class="neon"><span class="ic">📈</span><span class="tx"><div class="tt" id="o-s3t">Forme (5 derniers)</div></span><span class="val" id="o-s3v">V V V N V</span></div>
+    </div>
+    <div class="foot">
+      <div class="foot-row">
+        <div class="qr-frame" id="qr-pred"></div>
+        <div class="foot-tx">
+          <div class="socials">
+            <div>📱 <span>@blackparis_off</span></div>
+            <div>💬 Telegram · Insta · WhatsApp</div>
+          </div>
+          <div class="scan">⤺ Scanne pour toutes les prédictions</div>
+        </div>
+      </div>
+      <div class="legal">🔞 Jeu responsable · Analyse IA, résultats non garantis</div>
+      <div class="strip">La donnée · L'analyse · L'avantage</div>
+    </div>
+  </div>
+
+  <!-- CARTE BILAN -->
+  <div class="card hidden" id="card-bilan">
+    <div class="bp-head">
+      <div>
+        <div class="bp-logo"><span class="b">B</span><span class="p">P</span></div>
+        <div class="bp-name">BLACK <span>PARIS</span></div>
+      </div>
+      <div class="badge">
+        <div class="t">Taux<br>global</div>
+        <div class="v" id="ob-badge">70%</div>
+      </div>
+    </div>
+    <div class="banner">
+      <div class="top">Coupe du Monde 2026</div>
+      <div class="main" id="ob-titre">Bilan du jour</div>
+      <div class="sub" id="ob-sub">Mardi 7 juillet</div>
+    </div>
+    <div class="score-strip">
+      <div class="sc"><div class="n" id="ob-ok" style="color:var(--vert)">4</div><div class="l">Validés ✅</div></div>
+      <div class="sc"><div class="n" id="ob-ko" style="color:var(--rouge)">1</div><div class="l">Manqués ❌</div></div>
+      <div class="sc"><div class="n" id="ob-taux">80%</div><div class="l">Taux du jour</div></div>
+    </div>
+    <div class="bilan-list" id="ob-list"></div>
+    <div class="foot">
+      <div class="foot-row">
+        <div class="qr-frame" id="qr-bilan"></div>
+        <div class="foot-tx">
+          <div class="socials">
+            <div>📱 <span>@blackparis_off</span></div>
+            <div>💬 Telegram · Insta · WhatsApp</div>
+          </div>
+          <div class="scan">⤺ Scanne pour toutes les prédictions</div>
+        </div>
+      </div>
+      <div class="legal">🔞 Jeu responsable · Analyse IA, résultats non garantis</div>
+      <div class="strip">La donnée · L'analyse · L'avantage</div>
+    </div>
+  </div>
+
+  <!-- CARTE PUBLICITÉ -->
+  <div class="card hidden" id="card-pub">
+    <div id="pub-bg"></div><div class="shade"></div>
+    <div class="bp-head">
+      <div>
+        <div class="bp-logo"><span class="b">B</span><span class="p">P</span></div>
+        <div class="bp-name">BLACK <span>PARIS</span></div>
+      </div>
+      <div class="badge">
+        <div class="t" id="op-badget">Accès VIP</div>
+        <div class="v" id="op-badge">★</div>
+      </div>
+    </div>
+    <div class="banner">
+      <div class="top" id="op-comp">Coupe du Monde 2026</div>
+      <div class="main" id="op-titre">Abonnement VIP</div>
+      <div class="sub" id="op-sub">Offre limitée · Fin de CDM</div>
+    </div>
+    <div class="hero">
+      <div class="big" id="op-hero">PASS FINALE</div>
+      <div class="prix" id="op-prix">14,90 €</div>
+    </div>
+    <div class="promo" id="op-code">CODE : BLACK10</div>
+    <div class="neons" style="margin-bottom:auto;">
+      <div class="neon"><span class="ic">🎯</span><span class="tx"><div class="tt" id="op-p1">Pronos détaillés chaque jour</div></span></div>
+      <div class="neon"><span class="ic">📊</span><span class="tx"><div class="tt" id="op-p2">Analyses 1N2 · BTTS · Plus/Moins</div></span></div>
+      <div class="neon"><span class="ic">🔒</span><span class="tx"><div class="tt" id="op-p3">Canal Telegram privé</div></span></div>
+    </div>
+    <div class="cta"><span id="op-cta">Rejoins le VIP →</span></div>
+    <div class="foot">
+      <div class="foot-row">
+        <div class="qr-frame" id="qr-pub"></div>
+        <div class="foot-tx">
+          <div class="socials">
+            <div>📱 <span>@blackparis_off</span></div>
+            <div>💬 Telegram · Insta · WhatsApp</div>
+          </div>
+          <div class="scan">⤺ Scanne pour rejoindre</div>
+        </div>
+      </div>
+      <div class="legal">🔞 Jeu responsable · Analyse IA, résultats non garantis</div>
+      <div class="strip">La donnée · L'analyse · L'avantage</div>
+    </div>
+  </div>
+
+  <div id="btn-dl-wrap" style="display:flex;gap:8px;max-width:360px;width:100%;flex-wrap:wrap;">
+    <button class="dl" style="margin-top:14px;flex:2;" id="btn-dl" onclick="doCapture('png')">📸 PNG</button>
+    <button class="dl sec" style="margin-top:14px;flex:1;" onclick="doCapture('jpg')">JPG</button>
+    <button class="dl sec" style="margin-top:8px;flex:1 0 100%;" onclick="openReel()">🎬 Mode Reel (vidéo TikTok)</button>
+  </div>
+</div>
+</div><!-- /workspace -->
+
+<!-- ================= OVERLAY MODE REEL ================= -->
+<div id="reel">
+  <div id="reel-stage">
+    <div id="reel-count"></div>
+  </div>
+  <div id="reel-ctrl">
+    <button class="go" onclick="playReel()">▶ Rejouer</button>
+    <button onclick="recCountdown()">🔴 3·2·1</button>
+    <button onclick="toggleLoop(this)">🔁 Boucle</button>
+    <button onclick="closeReel()">✕ Fermer</button>
+  </div>
+  <div id="reel-hint">Lance ton enregistrement d'écran, puis « Compte à rebours » : l'animation démarre après 3·2·1. Ajoute la musique dans TikTok.</div>
+</div>
+
+<script>
+/* ================================================================
+   BLACK PARIS STUDIO V2
+   Modules : mode, thèmes, rendu, bilan, QR, OCR, presets, autosave
+   ================================================================ */
+
+let MODE = 'pred';
+let THEME = 'luxe';
+let FMT = '916';
+
+/* ---------- MODE ---------- */
+const MODES = ['pred','bilan','pub'];
+function switchMode(m){
+  MODE = m;
+  const isAI = (m==='ai');
+  // onglet AI
+  document.getElementById('tab-ai').classList.toggle('on', isAI);
+  document.getElementById('panel-ai').classList.toggle('hidden', !isAI);
+  // workspace (grille + carte) masqué en mode AI
+  document.getElementById('workspace').classList.toggle('hidden', isAI);
+  document.getElementById('btn-dl-wrap').classList.toggle('hidden', isAI);
+  // modes carte classiques
+  MODES.forEach(x=>{
+    document.getElementById('tab-'+x).classList.toggle('on', m===x);
+    const p = document.getElementById('panel-'+x);
+    if(p) p.classList.toggle('hidden', m!==x);
+    document.getElementById('card-'+x).classList.toggle('hidden', m!==x);
+  });
+  document.getElementById('panel-pub2').classList.toggle('hidden', m!=='pub');
+  saveState();
+}
+
+/* ---------- THÈMES / VARIANTES ---------- */
+function setTheme(t, btn){
+  THEME = t;
+  document.querySelectorAll('.card').forEach(c=>{
+    c.classList.remove('theme-minimal','theme-futur','theme-sport');
+    if(t!=='luxe') c.classList.add('theme-'+t);
+  });
+  document.querySelectorAll('.themes button').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  saveState();
+}
+
+/* ---------- RENDU PREDICTION ---------- */
+function renderPred(){
+  const map = {
+    'o-comp':'p-comp','o-titre':'p-titre','o-sub':'p-sub',
+    'o-d1':'p-d1','o-d2':'p-d2','o-n1':'p-n1','o-n2':'p-n2',
+    'o-v1':'p-v1','o-vn':'p-vn','o-v2':'p-v2',
+    'o-verd':'p-verd','o-conf':'p-conf','o-badge':'p-badge',
+    'o-s1t':'p-s1t','o-s1v':'p-s1v','o-s2t':'p-s2t','o-s2v':'p-s2v','o-s3t':'p-s3t','o-s3v':'p-s3v'
+  };
+  for(const k in map){ document.getElementById(k).innerText = document.getElementById(map[k]).value; }
+  document.getElementById('o-c1').innerText = 'Cote juste : ' + document.getElementById('p-c1').value;
+  document.getElementById('o-cn').innerText = 'Cote juste : ' + document.getElementById('p-cn').value;
+  document.getElementById('o-c2').innerText = 'Cote juste : ' + document.getElementById('p-c2').value;
+  makeQR('qr-pred', document.getElementById('p-qr').value);
+  saveState();
+}
+
+/* ---------- BILAN ---------- */
+let rows = [
+  {f1:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', f2:'🇲🇽', t:'Angleterre – Mexique', s:'3 - 2', p:'Prono : Angleterre', ok:true},
+  {f1:'🇧🇷', f2:'🇳🇴', t:'Brésil – Norvège', s:'1 - 2', p:'Prono : Brésil', ok:false},
+  {f1:'🇵🇾', f2:'🇫🇷', t:'Paraguay – France', s:'0 - 1', p:'Prono : France', ok:true},
+  {f1:'🇨🇦', f2:'🇲🇦', t:'Canada – Maroc', s:'0 - 3', p:'Prono : Maroc', ok:true}
+];
+
+function buildRowInputs(){
+  const box = document.getElementById('bilan-rows');
+  box.innerHTML = '';
+  rows.forEach((r,i)=>{
+    box.innerHTML += `
+    <div class="bilan-row">
+      <div class="row3">
+        <div><label>Drapeaux</label><input value="${r.f1} ${r.f2}" oninput="upRow(${i},'flags',this.value)"></div>
+        <div><label>Match</label><input value="${r.t}" oninput="upRow(${i},'t',this.value)"></div>
+        <div><label>Score</label><input value="${r.s}" oninput="upRow(${i},'s',this.value)"></div>
+      </div>
+      <div class="row2">
+        <div><label>Prono</label><input value="${r.p}" oninput="upRow(${i},'p',this.value)"></div>
+        <div><label>Résultat</label>
+          <select onchange="upRow(${i},'ok',this.value==='1')">
+            <option value="1" ${r.ok?'selected':''}>✅ Validé</option>
+            <option value="0" ${!r.ok?'selected':''}>❌ Manqué</option>
+          </select>
+        </div>
+      </div>
+    </div>`;
+  });
+}
+function upRow(i,k,v){
+  if(k==='flags'){ const parts=v.trim().split(/\s+/); rows[i].f1=parts[0]||''; rows[i].f2=parts[1]||''; }
+  else rows[i][k]=v;
+  renderBilan(false);
+}
+function addRow(){
+  rows.push({f1:'🏳️',f2:'🏳️',t:'Équipe A – Équipe B',s:'0 - 0',p:'Prono : —',ok:true});
+  buildRowInputs(); renderBilan(false);
+}
+function renderBilan(rebuild=true){
+  document.getElementById('ob-titre').innerText = document.getElementById('b-titre').value;
+  document.getElementById('ob-sub').innerText   = document.getElementById('b-sub').value;
+  document.getElementById('ob-ok').innerText    = document.getElementById('b-ok').value;
+  document.getElementById('ob-ko').innerText    = document.getElementById('b-ko').value;
+  document.getElementById('ob-taux').innerText  = document.getElementById('b-taux').value;
+  document.getElementById('ob-badge').innerText = document.getElementById('b-badge').value;
+  const list = document.getElementById('ob-list');
+  list.innerHTML = rows.map(r=>`
+    <div class="brow ${r.ok?'':'ko'}">
+      <span class="bfl">${r.f1}</span>
+      <span class="bmid">
+        <div class="bteams">${r.t}</div>
+        <div class="bscore">${r.s}</div>
+        <div class="bpron">${r.p}</div>
+      </span>
+      <span class="bfl">${r.f2}</span>
+      <span class="bres">${r.ok?'✅':'❌'}</span>
+    </div>`).join('');
+  makeQR('qr-bilan', document.getElementById('b-qr').value);
+  if(rebuild) buildRowInputs();
+  saveState();
+}
+
+/* ---------- QR ---------- */
+function makeQR(divId, url){
+  const el = document.getElementById(divId);
+  if(!el) return;
+  el.innerHTML = '';
+  const link = url || 'https://linktr.ee/BlackPAriss';
+  try {
+    if (typeof QRCode !== 'undefined') {
+      new QRCode(el, {text: link, width: 104, height: 104,
+        colorDark:'#000000', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M});
+      return;
+    }
+  } catch(e){}
+  const img = document.createElement('img');
+  img.crossOrigin = 'anonymous';
+  img.width = 104; img.height = 104;
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=104x104&data=' + encodeURIComponent(link);
+  el.appendChild(img);
+}
+
+/* ---------- OCR : SCREENSHOT → TEMPLATE ---------- */
+const drop = document.getElementById('drop');
+const shot = document.getElementById('shot');
+drop.addEventListener('dragover', e=>{e.preventDefault(); drop.classList.add('over');});
+drop.addEventListener('dragleave', ()=>drop.classList.remove('over'));
+drop.addEventListener('drop', e=>{
+  e.preventDefault(); drop.classList.remove('over');
+  if(e.dataTransfer.files[0]) runOCR(e.dataTransfer.files[0]);
+});
+shot.addEventListener('change', ()=>{ if(shot.files[0]) runOCR(shot.files[0]); });
+
+function setStatus(msg){ document.getElementById('ocr-status').innerText = msg; }
+
+function ensureTesseract(cb){
+  if (window.Tesseract) return cb();
+  setStatus('Chargement du module de lecture…');
+  const s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+  s.onload = cb;
+  s.onerror = ()=>setStatus("⚠️ Module OCR indisponible (connexion requise). Remplis les champs manuellement.");
+  document.head.appendChild(s);
+}
+
+function runOCR(file){
+  ensureTesseract(async ()=>{
+    try{
+      setStatus('Lecture de la capture en cours… (10-20 s)');
+      const result = await Tesseract.recognize(file, 'fra', {
+        logger: m => { if(m.status==='recognizing text') setStatus('Analyse : '+Math.round(m.progress*100)+'%'); }
+      });
+      const text = result.data.text || '';
+      document.getElementById('ocr-raw').classList.remove('hidden');
+      document.getElementById('ocr-text').innerText = text;
+      applyOCR(text);
+    }catch(err){
+      setStatus('⚠️ Lecture impossible : ' + (err.message||err));
+    }
+  });
+}
+
+/* Extraction heuristique : équipes, %, cotes */
+function applyOCR(text){
+  let found = [];
+
+  // Équipes : "X vs Y" / "X – Y" / "X - Y"
+  const mTeams = text.match(/([A-ZÀ-Ý][A-Za-zÀ-ÿ'.\- ]{2,20})\s*(?:vs|VS|–|—|-)\s*([A-ZÀ-Ý][A-Za-zÀ-ÿ'.\- ]{2,20})/);
+  if(mTeams){
+    document.getElementById('p-n1').value = mTeams[1].trim();
+    document.getElementById('p-n2').value = mTeams[2].trim();
+    found.push('équipes');
+  }
+
+  // Pourcentages : les 3 premiers = V1 / N / V2
+  const pcts = [...text.matchAll(/(\d{1,3})\s?%/g)].map(m=>m[1]+'%');
+  if(pcts.length >= 3){
+    document.getElementById('p-v1').value = pcts[0];
+    document.getElementById('p-vn').value = pcts[1];
+    document.getElementById('p-v2').value = pcts[2];
+    found.push('probabilités');
+  }
+
+  // Cotes : nombres type 1.92 / 4,16
+  const odds = [...text.matchAll(/\b(\d{1,2}[.,]\d{2})\b/g)].map(m=>m[1].replace(',','.'));
+  if(odds.length >= 3){
+    document.getElementById('p-c1').value = odds[0];
+    document.getElementById('p-cn').value = odds[1];
+    document.getElementById('p-c2').value = odds[2];
+    found.push('cotes');
+  }
+
+  // Verdict auto : équipe au % max
+  if(pcts.length >= 3 && mTeams){
+    const v1 = parseInt(pcts[0]), vn = parseInt(pcts[1]), v2 = parseInt(pcts[2]);
+    let verd = 'Match nul';
+    if(v1 >= vn && v1 >= v2) verd = 'Victoire ' + mTeams[1].trim();
+    else if(v2 >= vn) verd = 'Victoire ' + mTeams[2].trim();
+    document.getElementById('p-verd').value = verd;
+    found.push('verdict');
+  }
+
+  renderPred();
+  setStatus(found.length
+    ? '✅ Rempli automatiquement : ' + found.join(', ') + '. Vérifie et corrige si besoin.'
+    : '⚠️ Rien de reconnu automatiquement. Regarde le texte détecté ci-dessous et remplis à la main.');
+}
+
+/* ---------- BIBLIOTHÈQUE DE PRÉRÉGLAGES ---------- */
+function allFieldIds(){
+  return [...document.querySelectorAll('.panel input[id]')].map(i=>i.id);
+}
+function collectFields(){
+  const o = {};
+  allFieldIds().forEach(id=>{ o[id] = document.getElementById(id).value; });
+  return o;
+}
+function applyFields(o){
+  for(const id in o){
+    const el = document.getElementById(id);
+    if(el) el.value = o[id];
+  }
+}
+function getPresets(){
+  try{ return JSON.parse(localStorage.getItem('bp_presets')||'[]'); }catch(e){ return []; }
+}
+function savePreset(){
+  const name = document.getElementById('preset-name').value.trim() || ('Réglage ' + new Date().toLocaleDateString('fr-FR'));
+  const presets = getPresets();
+  presets.unshift({name, mode:MODE, theme:THEME, fmt:FMT, fields:collectFields(), rows:JSON.parse(JSON.stringify(rows)), date:Date.now()});
+  try{ localStorage.setItem('bp_presets', JSON.stringify(presets)); }catch(e){}
+  document.getElementById('preset-name').value = '';
+  listPresets();
+}
+function loadPreset(i){
+  const p = getPresets()[i];
+  if(!p) return;
+  applyFields(p.fields);
+  if(p.rows){ rows = p.rows; buildRowInputs(); }
+  const btn = document.querySelector('.themes .th-' + (p.theme==='luxe'?'luxe':p.theme));
+  setTheme(p.theme || 'luxe', btn);
+  if(p.fmt){
+    const fb = document.querySelector('.fmt-btns button[data-f="'+p.fmt+'"]');
+    setFmt(p.fmt, fb);
+  }
+  renderPred(); renderBilan(false); renderPub();
+  switchMode(p.mode || 'pred');
+}
+function delPreset(i){
+  const presets = getPresets();
+  presets.splice(i,1);
+  try{ localStorage.setItem('bp_presets', JSON.stringify(presets)); }catch(e){}
+  listPresets();
+}
+function listPresets(){
+  const q = (document.getElementById('preset-search').value||'').toLowerCase();
+  const box = document.getElementById('preset-list');
+  const presets = getPresets();
+  if(!presets.length){
+    box.innerHTML = '<div style="font-size:11px;color:#666;margin-top:8px;">Aucun préréglage sauvegardé.</div>';
+    return;
+  }
+  // Construction en une seule passe (évite les reflows répétés)
+  const html = presets.map((p,i)=>{
+    if(q && !p.name.toLowerCase().includes(q)) return '';
+    const modeLabel = p.mode==='bilan' ? 'Bilan' : (p.mode==='pub' ? 'Pub' : 'Prédiction');
+    return `
+    <div class="preset-item" onclick="loadPreset(${i})" style="cursor:pointer;">
+      <span class="nm">${p.name}</span>
+      <span class="md">${modeLabel} · ${p.theme||'luxe'}</span>
+      <button title="Charger" onclick="event.stopPropagation();loadPreset(${i})">📂</button>
+      <button title="Supprimer" onclick="event.stopPropagation();delPreset(${i})">🗑️</button>
+    </div>`;
+  }).join('');
+  box.innerHTML = html || '<div style="font-size:11px;color:#666;margin-top:8px;">Aucun résultat.</div>';
+}
+
+/* ---------- SAUVEGARDE AUTO ---------- */
+function saveState(){
+  try{
+    localStorage.setItem('bp_state', JSON.stringify({
+      mode:MODE, theme:THEME, fmt:FMT, fields:collectFields(), rows
+    }));
+  }catch(e){}
+}
+function restoreState(){
+  try{
+    const s = JSON.parse(localStorage.getItem('bp_state')||'null');
+    if(!s) return;
+    applyFields(s.fields||{});
+    if(s.rows) rows = s.rows;
+    if(s.mode) switchMode(s.mode);
+    if(s.theme && s.theme!=='luxe'){
+      const btn = document.querySelector('.themes .th-'+s.theme);
+      setTheme(s.theme, btn);
+    }
+    if(s.fmt && s.fmt!=='916'){
+      const btn = document.querySelector('.fmt-btns button[data-f="'+s.fmt+'"]');
+      setFmt(s.fmt, btn);
+    }
+  }catch(e){}
+}
+
+/* ---------- MODULE PUBLICITÉ ---------- */
+// Helper : lit la valeur d'un champ, chaîne vide si absent (évite les crashs)
+const v = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+
+function renderPub(){
+  const map = {
+    'op-comp':'pub-comp','op-titre':'pub-titre','op-sub':'pub-sub',
+    'op-hero':'pub-hero','op-p1':'pub-p1','op-p2':'pub-p2','op-p3':'pub-p3',
+    'op-cta':'pub-cta','op-badget':'pub-badget','op-badge':'pub-badge'
+  };
+  for(const k in map){ document.getElementById(k).innerText = v(map[k]); }
+  // prix et code : masqués si vides
+  const prix = v('pub-prix').trim();
+  const code = v('pub-code').trim();
+  const elP = document.getElementById('op-prix');
+  const elC = document.getElementById('op-code');
+  elP.innerText = prix; elP.style.display = prix ? 'inline-block' : 'none';
+  elC.innerText = code ? 'CODE : ' + code.toUpperCase() : '';
+  elC.style.display = code ? 'block' : 'none';
+  makeQR('qr-pub', v('pub-qr'));
+  saveState();
+}
+
+function setFmt(f, btn){
+  FMT = f;
+  const c = document.getElementById('card-pub');
+  c.classList.remove('fmt-11','fmt-169');
+  if(f==='11') c.classList.add('fmt-11');
+  if(f==='169') c.classList.add('fmt-169');
+  document.querySelectorAll('.fmt-btns button').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  saveState();
+}
+
+/* Templates marketing pré-remplis */
+const TPL = {
+  vip:    {comp:'Coupe du Monde 2026', titre:'Abonnement VIP', sub:'Offre limitée · Fin de CDM', hero:'PASS FINALE', prix:'14,90 €', code:'', p1:'Pronos détaillés chaque jour', p2:'Analyses 1N2 · BTTS · Plus/Moins', p3:'Canal Telegram privé', cta:'Rejoins le VIP →', badget:'Accès VIP', badge:'★'},
+  offre:  {comp:'Offre spéciale', titre:'Derniers jours', sub:'Jusqu\'à la finale seulement', hero:'-50%', prix:'7,45 € au lieu de 14,90 €', code:'', p1:'Tous les pronos des quarts à la finale', p2:'Analyses complètes du modèle IA', p3:'Accès immédiat après paiement', cta:'J\'en profite →', badget:'Promo', badge:'-50%'},
+  code:   {comp:'Code promo', titre:'Cadeau Black Paris', sub:'Valable 48h', hero:'CODE PROMO', prix:'', code:'BLACK10', p1:'-10% sur le pass VIP', p2:'À utiliser au moment du paiement', p3:'Cumulable avec rien du tout 😉', cta:'J\'utilise mon code →', badget:'Cadeau', badge:'🎁'},
+  win:    {comp:'Résultat', titre:'Prono validé', sub:'Comme prévu par le modèle', hero:'✅ GAGNÉ', prix:'Cote 1.92', code:'', p1:'Prédit à 68% de confiance', p2:'Analyse publiée avant le match', p3:'Transparence totale : tout est public', cta:'Vois les pronos du jour →', badget:'Taux', badge:'70%'},
+  match:  {comp:'Coupe du Monde 2026', titre:'Match du jour', sub:'Ce soir · 21h00', hero:'FRANCE – BRÉSIL', prix:'', code:'', p1:'Analyse complète sur le canal', p2:'1N2 · BTTS · Plus/Moins de buts', p3:'Publiée 3h avant le coup d\'envoi', cta:'Je veux l\'analyse →', badget:'Ce soir', badge:'⚽'},
+  launch: {comp:'Nouveau', titre:'Black Paris VIP', sub:'Ouverture officielle', hero:'C\'EST PARTI', prix:'14,90 €', code:'BLACK10', p1:'Le modèle IA à 70% de réussite', p2:'Pronos quotidiens jusqu\'à la finale', p3:'Places limitées pour ce sprint', cta:'Je rejoins maintenant →', badget:'Nouveau', badge:'🚀'}
+};
+function applyTpl(k){
+  const t = TPL[k]; if(!t) return;
+  const ids = {comp:'pub-comp',titre:'pub-titre',sub:'pub-sub',hero:'pub-hero',prix:'pub-prix',code:'pub-code',p1:'pub-p1',p2:'pub-p2',p3:'pub-p3',cta:'pub-cta',badget:'pub-badget',badge:'pub-badge'};
+  for(const key in ids){ document.getElementById(ids[key]).value = t[key]; }
+  renderPub();
+}
+
+/* Image de fond (visuel IA importé) */
+document.getElementById('pub-bgfile').addEventListener('change', e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    document.getElementById('pub-bg').style.backgroundImage = 'url(' + r.result + ')';
+    document.getElementById('card-pub').classList.add('has-bg');
+  };
+  r.readAsDataURL(f);
+});
+function clearBg(){
+  document.getElementById('pub-bg').style.backgroundImage = '';
+  document.getElementById('card-pub').classList.remove('has-bg');
+  document.getElementById('pub-bgfile').value = '';
+}
+
+/* Textes publicitaires multi-plateformes */
+const TAGS = '#CDM2026 #CoupeDuMonde #Pronostics #Football #ParisSportifs #BlackParis';
+function genCopy(){
+  const t = v('pub-titre'), hero = v('pub-hero'), sub = v('pub-sub');
+  const prix = v('pub-prix').trim(), code = v('pub-code').trim(), cta = v('pub-cta');
+  const offre = [prix, code ? 'Code ' + code.toUpperCase() : ''].filter(Boolean).join(' · ');
+  const resp = '🔞 Jeu responsable, 18+. Analyses IA, résultats non garantis.';
+
+  document.getElementById('ta-tiktok').value =
+`🖤 ${t.toUpperCase()} — ${hero}
+${sub}${offre ? '\n💰 ' + offre : ''}
+📲 Lien en bio 🔗
+${resp}
+${TAGS} #pronosfoot #tiktokfoot`;
+
+  document.getElementById('ta-insta').value =
+`⚫️✨ ${t.toUpperCase()}
+${hero} — ${sub}${offre ? '\n💰 ' + offre : ''}
+
+${v('pub-p1')} ✔️
+${v('pub-p2')} ✔️
+${v('pub-p3')} ✔️
+
+👉 ${cta} (lien en bio)
+${resp}
+${TAGS} #InstaFoot #Prediction`;
+
+  document.getElementById('ta-tg').value =
+`⚫️ **${t.toUpperCase()}** ⚫️
+
+${hero}
+${sub}${offre ? '\n\n💰 ' + offre : ''}
+
+✅ ${v('pub-p1')}
+✅ ${v('pub-p2')}
+✅ ${v('pub-p3')}
+
+👉 ${cta}
+🔗 https://linktr.ee/BlackPAriss
+
+${resp}`;
+
+  document.getElementById('ta-x').value =
+`⚫️ ${t} — ${hero}
+${sub}${offre ? ' · ' + offre : ''}
+👉 ${cta} 🔗 lien en bio
+${resp}
+${TAGS}`;
+}
+
+function copyTxt(id){
+  const el = document.getElementById(id);
+  el.select(); el.setSelectionRange(0, 99999);
+  try{ navigator.clipboard.writeText(el.value); }catch(e){ document.execCommand('copy'); }
+}
+
+/* Prompts IA pour visuels de fond (charte BLACK PARIS intégrée) */
+const CHARTE = "Luxury premium sports brand aesthetic: matte black background, pure gold (#E8B83A) accents, deep red details, titanium grey, subtle golden particles, cinematic dramatic lighting, high-end Dior/Porsche advertising style, ultra detailed, 8k, professional advertising photography. Leave the center-bottom area darker and less busy so text overlays remain readable. No text, no letters, no words, no logos in the image.";
+const PROMPTS = {
+  affiche:  {dim:'vertical poster 2:3', scene:'Epic football stadium at night under golden floodlights, dramatic haze, a golden World Cup style trophy glowing in the distance'},
+  insta:    {dim:'square 1:1', scene:'Close-up of a premium black VIP membership card with gold edges floating over a dark football pitch, golden bokeh particles'},
+  banniere: {dim:'wide banner 16:9', scene:'Panoramic night view of a packed football stadium, golden light rays, dark cinematic sky'},
+  youtube:  {dim:'thumbnail 16:9, bold and high contrast', scene:'Dramatic football about to be kicked, explosion of golden particles, intense energy, dark background'},
+  telegram: {dim:'wide cover 16:9', scene:'Minimal luxury composition: black silk texture with a single golden football on the right side, elegant shadows'},
+  tiktok:   {dim:'vertical 9:16', scene:'Dynamic low-angle shot of a football player silhouette in dark stadium, golden rim light, particles rising, motion energy'}
+};
+function genPrompt(){
+  const k = document.getElementById('sel-prompt').value;
+  const p = PROMPTS[k];
+  document.getElementById('ta-prompt').value =
+`${p.scene}. ${CHARTE} Format: ${p.dim}.`;
+}
+
+/* ---------- EXPORT ---------- */
+function doCapture(kind){
+  kind = kind || 'png';
+  const ids = {pred:'card-pred', bilan:'card-bilan', pub:'card-pub'};
+  const names = {pred:'black-paris-prediction', bilan:'black-paris-bilan', pub:'black-paris-pub'};
+  const btn = document.getElementById('btn-dl');
+  const oldTxt = btn ? btn.innerText : '';
+
+  // Diagnostic : librairie chargée ?
+  if(typeof html2canvas === 'undefined'){
+    alert("⚠️ Le module d'image n'est pas chargé.\nOuvre le fichier dans Safari/Chrome AVEC une connexion internet (pas dans l'aperçu), puis réessaie.");
+    return;
+  }
+  const node = document.getElementById(ids[MODE]);
+  if(!node){ alert('Carte introuvable.'); return; }
+  if(btn){ btn.disabled = true; btn.innerText = '⏳ Export...'; }
+
+  html2canvas(node, {scale:3, backgroundColor:'#000', useCORS:true, logging:false}).then(canvas=>{
+    const mime = kind==='jpg' ? 'image/jpeg' : 'image/png';
+    const ext  = kind==='jpg' ? 'jpg' : 'png';
+    const fname = names[MODE] + '-' + Date.now() + '.' + ext;
+
+    // Méthode fiable : Blob + lien (marche sur iPhone/Android)
+    const finish = ()=>{ if(btn){ btn.disabled=false; btn.innerText='✅ OK !'; setTimeout(()=>btn.innerText=oldTxt,1500); } };
+    if(canvas.toBlob){
+      canvas.toBlob(blob=>{
+        if(!blob){ fallbackDataURL(); return; }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = fname;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url), 4000);
+        // Ouvre aussi dans un nouvel onglet en secours (iPhone : appui long -> Enregistrer l'image)
+        finish();
+      }, mime, kind==='jpg'?0.95:1.0);
+    } else fallbackDataURL();
+
+    function fallbackDataURL(){
+      const data = canvas.toDataURL(mime, kind==='jpg'?0.95:1.0);
+      const w = window.open();
+      if(w){ w.document.write('<img src="'+data+'" style="width:100%"><p style="font-family:sans-serif">Appui long sur l\'image → Enregistrer</p>'); }
+      else { const a=document.createElement('a'); a.href=data; a.download=fname; a.click(); }
+      finish();
+    }
+  }).catch(err=>{
+    console.error('Export échoué :', err);
+    alert("⚠️ Export impossible : " + (err.message||err) + "\nSi tu as importé une image de fond, retire-la et réessaie.");
+    if(btn){ btn.disabled=false; btn.innerText=oldTxt; }
+  });
+}
+
+/* ================================================================
+   BLACK PARIS AI DIRECTOR — pilote les modules existants
+   Points d'extension prévus (non développés) : OCR, analyse de
+   screenshots, images IA, vidéos IA, campagnes auto.
+   ================================================================ */
+let aiHistory = [];
+
+function aiAddMsg(who, html){
+  const chat = document.getElementById('ai-chat');
+  const d = document.createElement('div');
+  d.className = 'msg ' + (who==='u'?'u':'a');
+  d.innerHTML = '<div class="b">' + html + '</div>';
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+  aiHistory.push({who, html});
+  try{ localStorage.setItem('bp_ai_hist', JSON.stringify(aiHistory.slice(-30))); }catch(e){}
+}
+
+function aiSetTasks(tasks){
+  const box = document.getElementById('ai-task-list');
+  box.innerHTML = tasks.map(t=>`<div class="task ${t.done?'done':''}"><span class="st">${t.done?'✅':'⚪'}</span> ${t.label}</div>`).join('');
+}
+
+/* Détection d'intention par mots-clés pondérés (aucune API) */
+function aiDetect(q){
+  q = q.toLowerCase();
+  const has = (...ks)=>ks.some(k=>q.includes(k));
+  if(has('screenshot','capture','scan','lis ','lire','importe','photo')) return 'ocr';
+  if(has('tout','journée','journee','toute la','all')) return 'all';
+  if(has('bilan','récap','recap','résultat','resultat')) return 'bilan';
+  if(has('pub','publicit','vip','abonnement','offre','promo','affiche','story','bannière','banniere','miniature','campagne')) return 'pub';
+  if(has('texte','caption','légende','legende','hashtag','accroche')) return 'copy';
+  if(has('prono','prédiction','prediction','match','favori')) return 'pred';
+  if(has('variante','thème','theme','style','luxe','futur','sport','minimal')) return 'variant';
+  return 'unknown';
+}
+
+/* Exécute l'intention en appelant les modules DÉJÀ présents */
+function aiSend(forced){
+  const input = document.getElementById('ai-text');
+  const q = (forced || input.value).trim();
+  if(!q) return;
+  aiAddMsg('u', q);
+  input.value = '';
+
+  const intent = aiDetect(q);
+  setTimeout(()=>{ // petit délai pour l'effet "assistant"
+    switch(intent){
+      case 'ocr':
+        switchMode('pred');
+        setTimeout(()=>{
+          const drop = document.getElementById('drop');
+          if(drop){ drop.scrollIntoView({behavior:'smooth', block:'center'}); drop.classList.add('over'); setTimeout(()=>drop.classList.remove('over'),1500); }
+        }, 300);
+        aiAddMsg('a', "📸 J'ai ouvert la zone <b>Screenshot → remplissage auto</b> (en haut du module Prédiction). Dépose ta capture dedans ou clique pour choisir l'image. Je lirai les équipes, %, cotes et je remplirai la carte.<br><br><b>Important</b> : la lecture ne marche que dans le vrai fichier ouvert dans ton navigateur (pas dans l'aperçu), et il faut internet la 1re fois.");
+        break;
+      case 'pred':
+        switchMode('pred'); renderPred();
+        aiAddMsg('a', "<b>Prédiction du jour</b> préparée ✅<br>J'ai ouvert le module et rempli la carte. Ajuste les équipes/cotes si besoin, puis <b>PNG</b> pour exporter. Astuce : dépose une capture de ton site dans <b>Screenshot → remplissage auto</b> pour tout pré-remplir.");
+        aiSetTasks([{label:'Ouvrir le module Prédiction',done:true},{label:'Remplir la carte',done:true},{label:'Vérifier les données',done:false},{label:'Exporter en PNG',done:false}]);
+        break;
+      case 'bilan':
+        switchMode('bilan'); renderBilan();
+        aiAddMsg('a', "<b>Bilan</b> prêt ✅<br>Module ouvert avec tes derniers matchs. Modifie les scores et ✅/❌, puis exporte.");
+        aiSetTasks([{label:'Ouvrir le module Bilan',done:true},{label:'Mettre à jour les matchs',done:false},{label:'Exporter',done:false}]);
+        break;
+      case 'pub':{
+        switchMode('pub');
+        // choisit un modèle selon la commande
+        let tpl='vip';
+        if(q.toLowerCase().match(/offre|promo réduc|réduction|reduction|-50/)) tpl='offre';
+        else if(q.toLowerCase().includes('code')) tpl='code';
+        else if(q.toLowerCase().match(/gagné|gagnant|résultat|resultat/)) tpl='win';
+        else if(q.toLowerCase().includes('match')) tpl='match';
+        else if(q.toLowerCase().match(/lancement|nouveau/)) tpl='launch';
+        applyTpl(tpl);
+        // format selon plateforme citée
+        if(q.toLowerCase().match(/story|tiktok|reel|short/)){ setFmt('916', document.querySelector('.fmt-btns button[data-f="916"]')); }
+        else if(q.toLowerCase().match(/insta|telegram|carré|carre/)){ setFmt('11', document.querySelector('.fmt-btns button[data-f="11"]')); }
+        else if(q.toLowerCase().match(/youtube|facebook|bannière|banniere|miniature/)){ setFmt('169', document.querySelector('.fmt-btns button[data-f="169"]')); }
+        aiAddMsg('a', "<b>Publicité</b> préparée ✅<br>Modèle « "+tpl+" » chargé dans ta charte BLACK PARIS. Change le format si besoin, importe un fond IA, puis exporte. Va dans <b>Campagne automatique</b> pour générer les textes de toutes les plateformes.");
+        aiSetTasks([{label:'Ouvrir le module Publicité',done:true},{label:'Charger le modèle',done:true},{label:'Choisir le format',done:true},{label:'Générer les textes',done:false},{label:'Exporter',done:false}]);
+        break;
+      }
+      case 'copy':
+        switchMode('pub'); genCopy();
+        aiAddMsg('a', "<b>Textes publicitaires</b> générés ✅<br>TikTok, Instagram, Telegram et X/Facebook sont prêts dans <b>Campagne automatique</b>. Clique 📋 pour copier celui que tu veux.");
+        aiSetTasks([{label:'Générer les textes',done:true},{label:'Copier vers chaque réseau',done:false}]);
+        break;
+      case 'variant':
+        aiAddMsg('a', "Tu peux basculer entre <b>Luxe</b>, <b>Minimaliste</b>, <b>Futuriste</b> et <b>Sport</b> avec les boutons de thème en haut. Lequel veux-tu ? Je te conseille <b>Luxe</b> pour le VIP et <b>Sport</b> pour les matchs.");
+        break;
+      case 'all':
+        switchMode('pred'); renderPred();
+        aiAddMsg('a', "<b>Programme du jour</b> 🚀<br>1️⃣ Prédiction du jour (ouverte maintenant)<br>2️⃣ Bilan de la veille<br>3️⃣ Publicité VIP<br>4️⃣ Textes pour tous les réseaux<br><br>Je commence par la prédiction. Dis « suivant » ou clique sur une suggestion pour enchaîner.");
+        aiSetTasks([{label:'Prédiction du jour',done:false},{label:'Bilan de la veille',done:false},{label:'Publicité VIP',done:false},{label:'Textes multi-plateformes',done:false}]);
+        break;
+      default:
+        aiAddMsg('a', "Je peux : préparer une <b>prédiction</b>, un <b>bilan</b>, une <b>publicité</b>, générer les <b>textes</b> de campagne, ou <b>tout préparer</b> d'un coup. Reformule avec un de ces mots, ou clique une suggestion ci-dessous. 🎯");
+    }
+  }, 220);
+}
+
+function restoreAI(){
+  try{
+    const h = JSON.parse(localStorage.getItem('bp_ai_hist')||'null');
+    if(h && h.length){ aiHistory=[]; h.forEach(m=>{ const c=document.getElementById('ai-chat'); const d=document.createElement('div'); d.className='msg '+(m.who==='u'?'u':'a'); d.innerHTML='<div class="b">'+m.html+'</div>'; c.appendChild(d); aiHistory.push(m); }); }
+    else aiAddMsg('a', "Bonjour Pipo 👋 Je suis ton <b>AI Director</b>. Dis-moi ce que tu veux créer aujourd'hui, ou clique une suggestion.");
+  }catch(e){}
+}
+
+/* ================================================================
+   MODE REEL — anime la carte active en plein écran pour capture vidéo
+   ================================================================ */
+let reelLoop = false;
+let reelTimer = null;
+
+function fitReel(){
+  const st = document.getElementById('reel-stage');
+  if(!st) return;
+  const s = Math.min((window.innerWidth*0.96)/360, (window.innerHeight*0.96)/640);
+  st.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+}
+window.addEventListener('resize', fitReel);
+
+function openReel(){
+  const ids = {pred:'card-pred', bilan:'card-bilan', pub:'card-pub'};
+  const src = document.getElementById(ids[MODE]);
+  if(!src){ alert('Aucune carte active.'); return; }
+  const stage = document.getElementById('reel-stage');
+  stage.querySelectorAll('.card').forEach(c=>c.remove());
+  const clone = src.cloneNode(true);
+  clone.classList.remove('hidden');
+  clone.removeAttribute('id');
+  stage.insertBefore(clone, document.getElementById('reel-count'));
+  document.getElementById('reel').classList.add('on');
+  fitReel();
+  playReel();
+}
+
+function playReel(){
+  const stage = document.getElementById('reel-stage');
+  stage.classList.remove('play');
+  void stage.offsetWidth;               // redémarre les animations
+  stage.classList.add('play');
+  // relance si boucle activée (l'anim dure ~5s)
+  clearTimeout(reelTimer);
+  if(reelLoop){ reelTimer = setTimeout(playReel, 6000); }
+}
+
+function recCountdown(){
+  const reel = document.getElementById('reel');
+  reel.classList.add('hidectrl');       // cache les boutons pour un enregistrement propre
+  const el = document.getElementById('reel-count');
+  let n = 3;
+  el.style.display='flex'; el.innerText=n;
+  const iv = setInterval(()=>{
+    n--;
+    if(n<=0){ clearInterval(iv); el.style.display='none'; playReel(); }
+    else el.innerText=n;
+  }, 1000);
+}
+
+function toggleLoop(btn){
+  reelLoop = !reelLoop;
+  btn.style.background = reelLoop ? 'linear-gradient(135deg,var(--jaune),var(--dore))' : '';
+  btn.style.color = reelLoop ? '#000' : '';
+  if(reelLoop) playReel(); else clearTimeout(reelTimer);
+}
+
+function closeReel(){
+  clearTimeout(reelTimer); reelLoop=false;
+  document.getElementById('reel').classList.remove('on','hidectrl');
+}
+
+// Tap sur l'écran pour réafficher les boutons (hors clic sur un bouton)
+document.getElementById('reel').addEventListener('click', e=>{
+  if(e.target.closest('#reel-ctrl')) return;
+  document.getElementById('reel').classList.remove('hidectrl');
+});
+
+/* ---------- INIT ---------- */
+restoreState();
+restoreAI();
+buildRowInputs();
+renderPred();
+renderBilan(false);
+renderPub();
+listPresets();
+</script>
+</body>
+</html>
